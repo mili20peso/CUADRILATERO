@@ -48,6 +48,24 @@ CuadrilaterosPlayer >> clearTurnEffects [
     activeEffects removeAll.
 ]
 
+{ #category : #'game logic' }
+CuadrilaterosPlayer >> diceConfiguration [
+    "Genera el diccionario con las claves exactas que espera tu método rollMod:"
+    | config |
+    config := Dictionary new.
+    
+    activeEffects do: [ :effect | 
+        "Traducimos los PowerUps a tus Strings claves"
+        
+        (effect isKindOf: PowerUpPlusOne)  ifTrue: [ config at: '+1' put: true ].
+        (effect isKindOf: PowerUpMinusOne) ifTrue: [ config at: '-1' put: true ].
+        (effect isKindOf: PowerUpLowRoll)  ifTrue: [ config at: '<3' put: true ].
+        (effect isKindOf: PowerUpHighRoll) ifTrue: [ config at: '>3' put: true ].
+    ].
+
+    ^ config
+]
+
 { #category : #accessing }
 CuadrilaterosPlayer >> hasPowerUp: aPowerUpClass [
     "Verifica si el jugador tiene un tipo específico de potenciador activo.

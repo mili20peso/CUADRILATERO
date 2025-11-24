@@ -75,6 +75,12 @@ CuadrilaterosBoard >> checkAdjacencyFor: originPoint width: w height: h player: 
     ^ foundAdjacency
 ]
 
+{ #category : #accesing }
+CuadrilaterosBoard >> columns [
+    "Devuelve la cantidad de columnas del tablero"
+    ^ columns
+]
+
 { #category : #initialization }
 CuadrilaterosBoard >> contentAt: aPoint [
     "Devuelve lo que hay en esa celda: nil, un ID de jugador o un PowerUp"
@@ -169,6 +175,12 @@ CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer
 
     "Sumamos el área al jugador (w * h)"
     aPlayer addArea: (w * h).
+]
+
+{ #category : #accesing }
+CuadrilaterosBoard >> rows [
+    "Devuelve la cantidad de filas del tablero"
+    ^ rows
 ]
 
 { #category : #initialization }

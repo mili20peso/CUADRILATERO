@@ -28,10 +28,13 @@ CuadrilaterosDice >> roll [
 
 { #category : #random }
 CuadrilaterosDice >> roll: modifiers [
-    "Recibe el diccionario, calcula los nuevos valores y actualiza el estado interno"
+    "Calcula x e y, y devuelve un Punto (Point) listo para usar en el Tablero"
+    | valX valY |
     
-    x := self rollMod: modifiers.
-    y := self rollMod: modifiers.
+    valX := self rollMod: modifiers.
+    valY := self rollMod: modifiers.
+    
+    ^ valX @ valY  "Esto devuelve un objeto Point (ej: 3@5)"
 ]
 
 { #category : #random }

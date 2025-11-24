@@ -192,14 +192,15 @@ CuadrilaterosGAME >> playerCannotMove [
 
 { #category : #'control flow instructions' }
 CuadrilaterosGAME >> rollDiceForCurrentPlayer [
-    "Tira los dados usando la configuración del jugador actual (si tiene potenciadores)"
-    | player config resultX resultY |
+    | player config resultPoint |
     
     player := self currentPlayer.
-    config := player diceConfiguration. "Obtiene reglas (ej: <3, +1)"
     
-	 dice roll: config.
-    resultX:= dice x.
-	 resultY:= dice y.
-    ^ resultX @ resultY "Devuelve un Point con (ancho @ alto)"
+    "1. Obtenemos el diccionario con tus claves ('+1', '<3', etc)"
+    config := player diceConfiguration. 
+    
+    "2. Llamamos a TU método roll: que devuelve un Point"
+    resultPoint := dice roll: config.
+    
+    ^ resultPoint
 ]

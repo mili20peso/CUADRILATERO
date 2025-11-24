@@ -62,6 +62,30 @@ CuadrilaterosGameWindow >> buildUI [
     self createGridCells.
 ]
 
+{ #category : #drawing }
+CuadrilaterosGameWindow >> ccreateGridCells [
+    | rows cols cell |
+    rows := game board rows.
+    cols := game board columns.
+    
+    "--- CORRECCIÓN AQUÍ ---"
+    boardMorph removeAllMorphs. 
+    "-----------------------"
+    
+    boardMorph extent: (cols * cellSize) @ (rows * cellSize).
+    
+    1 to: rows do: [ :r |
+        1 to: cols do: [ :c |
+            cell := CuadrilaterosCellMorph new.
+            cell extent: cellSize@cellSize.
+            cell position: boardMorph position + (((c - 1) * cellSize) @ ((r - 1) * cellSize)).
+            cell row: r col: c.
+            cell on: #mouseDown send: #cellClicked: to: self.
+            boardMorph addMorph: cell.
+        ].
+    ].
+]
+
 { #category : #events }
 CuadrilaterosGameWindow >> cellClicked: anEvent [
     "Cuando el usuario hace click en una celda, intenta poner la figura"
