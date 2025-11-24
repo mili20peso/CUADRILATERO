@@ -132,7 +132,9 @@ CuadrilaterosGameWindow >> createGridCells [
     rows := game board rows.
     cols := game board columns.
     
-    boardMorph submorphs removeAll.
+    "--- CORRECCIÓN IMPORTANTE ---"
+    boardMorph removeAllMorphs.  "Usar esto en lugar de submorphs removeAll"
+    "-----------------------------"
     
     "Calculamos tamaño total"
     boardMorph extent: (cols * cellSize) @ (rows * cellSize).
@@ -142,7 +144,7 @@ CuadrilaterosGameWindow >> createGridCells [
             cell := CuadrilaterosCellMorph new.
             cell extent: cellSize@cellSize.
             
-            "CORRECCIÓN AQUÍ: Paréntesis explícitos para evitar confusión matemática"
+            "Posicionamiento manual"
             cell position: boardMorph position + (((c - 1) * cellSize) @ ((r - 1) * cellSize)).
             
             cell row: r col: c.

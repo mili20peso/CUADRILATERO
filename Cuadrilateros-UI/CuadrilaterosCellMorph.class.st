@@ -52,21 +52,36 @@ CuadrilaterosCellMorph >> row: r col: c [
 
 { #category : #drawing }
 CuadrilaterosCellMorph >> updateStateFrom: aValue [
-	self submorphs removeAll.
-	aValue isNil
-		ifTrue: [ self color: Color white.
-			^ self ].
-	aValue isNumber
-		ifTrue: [ self color: (self colorForPlayer: aValue).
-			^ self ].
-	(aValue isKindOf: CuadrilaterosPowerUp)
-		ifFalse: [ ^ self ].
-	self color: Color lightGray.
-	self
-		addMorph:
-			(StringMorph new
-				contents: (self iconForPowerUp: aValue);
-				color: Color black;
-				yourself).
-	self submorphs first center: self center
+    "Actualiza la visualización de la celda según el contenido del tablero"
+    
+    "--- CORRECCIÓN ---"
+    self removeAllMorphs. "Esta es la forma correcta de limpiar una celda en Morphic"
+    "------------------"
+
+    "1. Caso Vacío"
+    aValue isNil ifTrue: [ 
+        self color: Color white.
+        ^ self 
+    ].
+
+    "2. Caso Jugador (Número)"
+    aValue isNumber ifTrue: [ 
+        self color: (self colorForPlayer: aValue).
+        ^ self 
+    ].
+
+    "3. Caso PowerUp"
+    (aValue isKindOf: CuadrilaterosPowerUp) ifFalse: [ ^ self ].
+    
+    "Dibujar PowerUp"
+    self color: Color lightGray.
+    self addMorph: (StringMorph new
+                contents: (self iconForPowerUp: aValue);
+                color: Color black;
+                yourself).
+                
+    "Centrar el ícono recién agregado"
+    self submorphs notEmpty ifTrue: [ 
+        self submorphs first center: self center 
+    ].
 ]
