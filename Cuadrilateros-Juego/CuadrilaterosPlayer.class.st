@@ -1,5 +1,5 @@
 "
-Clase jugador
+Clase Jugador de Cuadrilateros
 "
 Class {
 	#name : #CuadrilaterosPlayer,

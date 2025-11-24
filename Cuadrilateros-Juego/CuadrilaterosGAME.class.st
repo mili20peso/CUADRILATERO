@@ -14,7 +14,7 @@ Class {
 	#category : #'Cuadrilateros-Juego'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'control flow instructions' }
 CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [
     "Intenta colocar la figura. Retorna true si tuvo éxito, false si falló.
      aPointDimensions: (ancho @ alto) que salieron en los dados.
@@ -37,7 +37,7 @@ CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [
               player: player.
               
         "Revisar si tenía el PowerUp RandomBlock y ejecutarlo ahora"
-        (player hasPowerUp: CuadrilaterosPowerUpRandomBlock) ifTrue: [
+        (player hasPowerUp: PowerUpRandomBlock) ifTrue: [
              board placeRandomBlockFor: player.
         ].
     ] ifFalse: [
@@ -49,18 +49,38 @@ CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [
     ^ success
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #extra }
+CuadrilaterosGAME >> blockNextPlayer [
+    "Busca al siguiente jugador en la ronda y le agrega el efecto de bloqueo"
+    
+    | nextIndex nextPlayer blockingEffect |
+    
+    "1. Calculamos el índice del siguiente jugador (Matemática circular)"
+    nextIndex := (currentPlayerIndex \\ players size) + 1.
+    
+    "2. Obtenemos al jugador víctima"
+    nextPlayer := players at: nextIndex.
+    
+    "3. Creamos una instancia del bloqueo para usarla como 'marca'"
+    blockingEffect := PowerUpBlockTurn new.
+    
+    "4. Se la enchufamos al enemigo en sus efectos activos"
+    nextPlayer addPowerUp: blockingEffect.
+    
+]
+
+{ #category : #accesing }
 CuadrilaterosGAME >> board [
     ^ board
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 CuadrilaterosGAME >> currentPlayer [
     "Devuelve el objeto Jugador al que le toca jugar ahora"
     ^ players at: currentPlayerIndex.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 CuadrilaterosGAME >> getWinner [
     ^ players asSortedCollection: [ :a :b | 
         (a areaCovered > b areaCovered) or: [ 
@@ -112,40 +132,50 @@ CuadrilaterosGAME >> initializeWithPlayers: playerCount boardSize: size [
 		player: (players at: 4)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 CuadrilaterosGAME >> isGameOver [
     ^ isGameOver
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'control flow instructions' }
 CuadrilaterosGAME >> nextTurn [
-    "Avanza al siguiente jugador vivo y gestiona eventos de turno"
-    | activePlayers nextPlayer |
+    "Avanza al siguiente jugador, saltando a los muertos y a los BLOQUEADOS"
+    | nextPlayer |
     
-    "1. Verificar condición de fin de juego"
-    activePlayers := players select: [ :p | p isAlive ].
-    activePlayers isEmpty ifTrue: [ 
+    "1. Verificar si el juego terminó (chequeo rápido)"
+    (players select: [:p | p isAlive]) isEmpty ifTrue: [ 
         isGameOver := true. 
         ^ self 
     ].
     
-    "2. Limpiar efectos temporales del jugador que acaba de terminar"
+    "2. Limpiar efectos del jugador que acaba de terminar (el actual)"
     self currentPlayer clearTurnEffects.
     
-    "3. Avanzar índice (Circular)"
+    "3. Avanzar el índice matemáticamente"
     currentPlayerIndex := (currentPlayerIndex \\ players size) + 1.
     nextPlayer := self currentPlayer.
     
-    "4. Si el siguiente está muerto, recursividad al siguiente"
-    nextPlayer isAlive ifFalse: [ ^ self nextTurn ].
-
-    "5. Si el siguiente está BLOQUEADO por un PowerUp"
-    (nextPlayer hasPowerUp: CuadrilaterosPowerUpBlockTurn) ifTrue: [
-        "Consumimos el bloqueo y saltamos turno"
-        nextPlayer activeEffects removeAllSuchThat: [:e | e isKindOf: CuadrilaterosPowerUpBlockTurn ].
-        ^ self nextTurn. 
+    "--- LÓGICA DE SALTO ---"
+    
+    "4. CASO A: El jugador está MUERTO"
+    nextPlayer isAlive ifFalse: [ 
+        ^ self nextTurn "Recursividad: Saltamos al siguiente inmediatamente"
     ].
 
+    "5. CASO B: El jugador está VIVO pero BLOQUEADO"
+    (nextPlayer hasPowerUp: PowerUpBlockTurn) ifTrue: [
+        "Le quitamos el bloqueo (se consume)"
+        nextPlayer activeEffects removeAllSuchThat: [:e | e isKindOf: PowerUpBlockTurn].
+        
+        Transcript show: 'Saltando turno de Jugador ', nextPlayer id asString; cr.
+        
+        ^ self nextTurn "Recursividad: Lo saltamos y buscamos al siguiente"
+    ].
+
+    "6. CASO C: Jugador válido. Comienza su turno."
+    "Generar probabilidad de PowerUp en el mapa (ej: 20%)"
+    
+    nextPlayer recordTurn.
     
     (3 atRandom) = 1 ifTrue: [ board spawnRandomPowerUp ].
 
@@ -153,14 +183,14 @@ CuadrilaterosGAME >> nextTurn [
     nextPlayer recordTurn.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #control }
 CuadrilaterosGAME >> playerCannotMove [
     "El jugador pierde una vida y se pasa el turno"
     self currentPlayer loseLife.
     self nextTurn.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'control flow instructions' }
 CuadrilaterosGAME >> rollDiceForCurrentPlayer [
     "Tira los dados usando la configuración del jugador actual (si tiene potenciadores)"
     | player config resultX resultY |

@@ -7,7 +7,7 @@ Class {
 	#category : #'Cuadrilateros-Juego'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #activation }
 PowerUpMinusOne >> activateOn: aPlayer game: aGame [
-    aPlayer addEffect: #minusOne.
+    aPlayer addPowerUp: #minusOne.
 ]

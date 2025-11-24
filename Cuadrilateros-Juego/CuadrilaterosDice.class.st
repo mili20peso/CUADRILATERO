@@ -19,14 +19,14 @@ CuadrilaterosDice >> initialize [
     random := Random new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #random }
 CuadrilaterosDice >> roll [
     "Retorna un número para las columnas (X) de 1 a 6"
     x:= random nextInt: 6.
 	 y:= random nextInt:6. 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #random }
 CuadrilaterosDice >> roll: modifiers [
     "Recibe el diccionario, calcula los nuevos valores y actualiza el estado interno"
     
@@ -34,7 +34,7 @@ CuadrilaterosDice >> roll: modifiers [
     y := self rollMod: modifiers.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #random }
 CuadrilaterosDice >> rollMod: modifiers [
 	
     "Genera una tirada aplicando las reglas del diccionario de configuración.
@@ -76,12 +76,12 @@ CuadrilaterosDice >> rollMod: modifiers [
     ^ result max: 1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 CuadrilaterosDice >> x [
 	^x
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 CuadrilaterosDice >> y [
 	^y
 ]

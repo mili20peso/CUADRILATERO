@@ -1,5 +1,5 @@
 "
-Tablero de juego
+Clase tablero
 "
 Class {
 	#name : #CuadrilaterosBoard,
@@ -28,7 +28,7 @@ CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPla
 
     "2. Validar Superposición"
     "Preguntamos al jugador si tiene el PowerUp de sobrescribir"
-    canOverwrite := aPlayer hasPowerUp: CuadrilaterosPowerUpOverwrite. 
+    canOverwrite := aPlayer hasPowerUp: PowerUpOverwrite. 
 
     startX to: endX do: [ :x |
         startY to: endY do: [ :y |

@@ -7,12 +7,12 @@ Class {
 	#category : #'Cuadrilateros-Juego'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #activation }
 CuadrilaterosPowerUp >> activateOn: aPlayer game: aGame [
     self subclassResponsibility
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'context activation' }
 CuadrilaterosPowerUp >> randomSubclass [
     "Devuelve una de las subclases concretas al azar.
      Usa 'subclasses' que devuelve una colección con los hijos de esta clase."

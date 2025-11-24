@@ -7,7 +7,7 @@ Class {
 	#category : #'Cuadrilateros-Juego'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #activation }
 PowerUpHighRoll >> activateOn: aPlayer game: aGame [
-    aPlayer addEffect: #forceHighRoll.
+    aPlayer addPowerUp: #forceHighRoll.
 ]
