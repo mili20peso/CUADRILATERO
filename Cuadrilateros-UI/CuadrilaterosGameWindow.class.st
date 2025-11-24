@@ -62,30 +62,6 @@ CuadrilaterosGameWindow >> buildUI [
     self createGridCells.
 ]
 
-{ #category : #drawing }
-CuadrilaterosGameWindow >> ccreateGridCells [
-    | rows cols cell |
-    rows := game board rows.
-    cols := game board columns.
-    
-    "--- CORRECCIÓN AQUÍ ---"
-    boardMorph removeAllMorphs. 
-    "-----------------------"
-    
-    boardMorph extent: (cols * cellSize) @ (rows * cellSize).
-    
-    1 to: rows do: [ :r |
-        1 to: cols do: [ :c |
-            cell := CuadrilaterosCellMorph new.
-            cell extent: cellSize@cellSize.
-            cell position: boardMorph position + (((c - 1) * cellSize) @ ((r - 1) * cellSize)).
-            cell row: r col: c.
-            cell on: #mouseDown send: #cellClicked: to: self.
-            boardMorph addMorph: cell.
-        ].
-    ].
-]
-
 { #category : #events }
 CuadrilaterosGameWindow >> cellClicked: anEvent [
     "Cuando el usuario hace click en una celda, intenta poner la figura"
@@ -97,6 +73,33 @@ CuadrilaterosGameWindow >> cellClicked: anEvent [
     clickedPoint := cell col @ cell row. "Ojo: Pharo usa x@y, que es col@row"
     
     "Intentamos colocar la figura con las dimensiones de los dados actuales"
+    success := game attemptPlaceShape: currentDiceRoll at: clickedPoint.
+    
+    success ifTrue: [
+        messageLabel contents: '¡Jugada exitosa! Turno siguiente.'.
+        game nextTurn.
+        self rollDiceForNextTurn.
+        self updateDisplay.
+        self checkVictory.
+    ] ifFalse: [
+        messageLabel contents: 'Movimiento INVÁLIDO. Revisa adyacencia o espacio.'.
+        (game currentPlayer hasPowerUp: PowerUpOverwrite) ifTrue: [
+             messageLabel contents: messageLabel contents, ' (Tienes Overwrite activo)'.
+        ].
+    ].
+]
+
+{ #category : #events }
+CuadrilaterosGameWindow >> cellClicked: anEvent from: aCell [
+    "Ahora recibimos la celda directamente como segundo argumento"
+    | clickedPoint success |
+    
+    game isGameOver ifTrue: [ ^ self ].
+    
+    "Ya no necesitamos anEvent receiver, usamos aCell directamente"
+    clickedPoint := aCell col @ aCell row. 
+    
+    "Intentamos colocar la figura"
     success := game attemptPlaceShape: currentDiceRoll at: clickedPoint.
     
     success ifTrue: [
@@ -132,23 +135,22 @@ CuadrilaterosGameWindow >> createGridCells [
     rows := game board rows.
     cols := game board columns.
     
-    "--- CORRECCIÓN IMPORTANTE ---"
-    boardMorph removeAllMorphs.  "Usar esto en lugar de submorphs removeAll"
-    "-----------------------------"
+    boardMorph removeAllMorphs.
     
-    "Calculamos tamaño total"
     boardMorph extent: (cols * cellSize) @ (rows * cellSize).
     
     1 to: rows do: [ :r |
         1 to: cols do: [ :c |
             cell := CuadrilaterosCellMorph new.
             cell extent: cellSize@cellSize.
-            
-            "Posicionamiento manual"
             cell position: boardMorph position + (((c - 1) * cellSize) @ ((r - 1) * cellSize)).
-            
             cell row: r col: c.
-            cell on: #mouseDown send: #cellClicked: to: self.
+            
+            "--- CORRECCIÓN AQUÍ ---"
+            "Cambiamos el selector para que acepte 2 argumentos"
+            cell on: #mouseDown send: #cellClicked:from: to: self.
+            "-----------------------"
+            
             boardMorph addMorph: cell.
         ].
     ].
