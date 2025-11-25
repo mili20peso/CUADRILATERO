@@ -11,7 +11,8 @@ Class {
 		'diceLabel',
 		'messageLabel',
 		'currentDiceRoll',
-		'cellSize'
+		'cellSize',
+		'ghostMorph'
 	],
 	#category : #'Cuadrilateros-UI'
 }
@@ -60,6 +61,7 @@ CuadrilaterosGameWindow >> buildUI [
     
     "Generar la grilla"
     self createGridCells.
+	self on: #mouseEnter send: #takeKeyboardFocus to: self.
 ]
 
 { #category : #events }
@@ -136,24 +138,34 @@ CuadrilaterosGameWindow >> createGridCells [
     cols := game board columns.
     
     boardMorph removeAllMorphs.
-    
     boardMorph extent: (cols * cellSize) @ (rows * cellSize).
     
+    "1. Crear las celdas normales"
     1 to: rows do: [ :r |
         1 to: cols do: [ :c |
             cell := CuadrilaterosCellMorph new.
             cell extent: cellSize@cellSize.
             cell position: boardMorph position + (((c - 1) * cellSize) @ ((r - 1) * cellSize)).
             cell row: r col: c.
-            
-            "--- CORRECCIÓN AQUÍ ---"
-            "Cambiamos el selector para que acepte 2 argumentos"
             cell on: #mouseDown send: #cellClicked:from: to: self.
-            "-----------------------"
-            
             boardMorph addMorph: cell.
         ].
     ].
+
+    "2. Configurar evento de movimiento del mouse"
+    boardMorph on: #mouseMove send: #updateGhostPosition: to: self.
+
+    "3. Crear el Fantasma visual"
+    ghostMorph := BorderedMorph new.
+    ghostMorph color: (Color blue alpha: 0.3). "Semi-transparente"
+    ghostMorph borderColor: Color blue.
+    ghostMorph borderWidth: 2.
+    ghostMorph lock. "CRUCIAL: Hace que los clicks atraviesen el fantasma y lleguen a la celda"
+    
+    boardMorph addMorph: ghostMorph.
+    
+    "Ajustar tamaño inicial"
+    self updateGhostSize.
 ]
 
 { #category : #events }
@@ -181,10 +193,10 @@ CuadrilaterosGameWindow >> initializeWithGame: aGame [
 CuadrilaterosGameWindow >> keyStroke: anEvent [
 	game isGameOver
 		ifTrue: [ ^ self ].
-	('rR' includes: anEvent keyCharacter)
+	anEvent keyCharacter = Character space
 		ifFalse: [ ^ self ].
 	game currentPlayer loseLife.
-	messageLabel contents: 'Te rendiste en este turno. Pierdes 1 vida.'.
+	messageLabel contents: '¡TE RENDISTE! Pierdes 1 vida y pasas turno.'.
 	game nextTurn.
 	self rollDiceForNextTurn.
 	self updateDisplay.
@@ -193,10 +205,10 @@ CuadrilaterosGameWindow >> keyStroke: anEvent [
 
 { #category : #'game logic' }
 CuadrilaterosGameWindow >> rollDiceForNextTurn [
-    "Tira los dados para el jugador que le toca AHORA"
-    game isGameOver ifFalse: [
-        currentDiceRoll := game rollDiceForCurrentPlayer.
-    ].
+	game isGameOver
+		ifTrue: [ ^ self ].
+	currentDiceRoll := game rollDiceForCurrentPlayer.
+	self updateGhostSize	"ajusta el tamaño de la figura fantasma"
 ]
 
 { #category : #'game logic' }
@@ -214,4 +226,12 @@ CuadrilaterosGameWindow >> updateDisplay [
     "Actualizar Etiquetas"
     diceLabel contents: 'JUGADOR ', game currentPlayer id asString, 
                         ' | Dados: ', currentDiceRoll x asString, ' x ', currentDiceRoll y asString.
+]
+
+{ #category : #drawing }
+CuadrilaterosGameWindow >> updateGhostSize [
+    "Si el fantasma existe, actualizamos su tamaño (Ancho de dados * celda)"
+    ghostMorph ifNotNil: [
+        ghostMorph extent: (currentDiceRoll x * cellSize) @ (currentDiceRoll y * cellSize).
+    ].
 ]

@@ -29,13 +29,13 @@ CuadrilaterosCellMorph >> colorForPlayer: anId [
 { #category : #drawing }
 CuadrilaterosCellMorph >> iconForPowerUp: aPowerUp [
     "Retorna un string/emoji segun la clase"
-    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ '⛔' ].
+    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Ø' ].
     (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ '+1' ].
     (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ '-1' ].
-    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '⬇' ].
-    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ '⬆' ].
-    (aPowerUp isKindOf: PowerUpOverwrite) ifTrue: [ ^ '⚔️' ].
-    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ '🎲' ].
+    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '☺' ].
+    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ '☻' ].
+    (aPowerUp isKindOf: PowerUpOverwrite) ifTrue: [ ^ 'λ' ].
+    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ '◙' ].
     ^ '?'
 ]
 
