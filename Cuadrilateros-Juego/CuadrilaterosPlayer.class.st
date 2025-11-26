@@ -68,11 +68,8 @@ CuadrilaterosPlayer >> diceConfiguration [
 
 { #category : #accessing }
 CuadrilaterosPlayer >> hasPowerUp: aPowerUpClass [
-    "Verifica si el jugador tiene un tipo específico de potenciador activo.
-     Útil para que el Tablero pregunte si puede sobrescribir.
-     Ejemplo: player hasPowerUp: OverwritePowerUp"
-    
-    ^ activeEffects anySatisfy: [ :each | each isKindOf: aPowerUpClass ]
+    "Recorre la lista y busca si alguno es del tipo (Clase) que pedimos"
+    ^ activeEffects anySatisfy: [ :effect | effect isKindOf: aPowerUpClass ]
 ]
 
 { #category : #accessing }

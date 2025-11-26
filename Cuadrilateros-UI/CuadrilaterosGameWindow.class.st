@@ -19,9 +19,8 @@ Class {
 
 { #category : #building }
 CuadrilaterosGameWindow >> buildUI [
-    | mainContainer |
+    | mainContainer skipButton |
     
-    "Panel principal"
     mainContainer := Morph new 
         layoutPolicy: TableLayout new;
         listDirection: #leftToRight;
@@ -32,13 +31,13 @@ CuadrilaterosGameWindow >> buildUI [
         
     self addMorph: mainContainer frame: (0@0 extent: 1@1).
     
-    "1. Crear el Tablero Visual (SIN layoutPolicy, posicionamiento manual)"
+    "1. Tablero"
     boardMorph := Morph new
         color: Color darkGray;
         borderColor: Color black;
         borderWidth: 2.
         
-    "2. Crear el Panel de Info"
+    "2. Panel de Información"
     infoPanel := Morph new
         layoutPolicy: TableLayout new;
         listDirection: #topToBottom;
@@ -54,14 +53,22 @@ CuadrilaterosGameWindow >> buildUI [
     infoPanel addMorph: (StringMorph new contents: 'ESTADO DEL JUEGO'; font: (TextStyle default fontOfSize: 14)).
     infoPanel addMorph: diceLabel.
     infoPanel addMorph: messageLabel.
-    infoPanel addMorph: (StringMorph new contents: 'Presiona "R" para Rendirte/Saltar').
+    
+    "--- NUEVO: BOTÓN DE SALTAR TURNO ---"
+    skipButton := SimpleButtonMorph new.
+    skipButton label: 'SALTAR TURNO (-1 Vida)'.
+    skipButton color: (Color red alpha: 0.7).
+    skipButton target: self.           "El botón le avisa a la Ventana"
+    skipButton actionSelector: #skipTurnAction. "Llama a este método"
+    skipButton extent: 200@40.
+    
+    infoPanel addMorph: skipButton.
+    "------------------------------------"
     
     mainContainer addMorph: boardMorph.
     mainContainer addMorph: infoPanel.
     
-    "Generar la grilla"
     self createGridCells.
-	self on: #mouseEnter send: #takeKeyboardFocus to: self.
 ]
 
 { #category : #events }
@@ -152,8 +159,6 @@ CuadrilaterosGameWindow >> createGridCells [
         ].
     ].
 
-    "2. Configurar evento de movimiento del mouse"
-    boardMorph on: #mouseMove send: #updateGhostPosition: to: self.
 
     "3. Crear el Fantasma visual"
     ghostMorph := BorderedMorph new.
@@ -211,6 +216,39 @@ CuadrilaterosGameWindow >> rollDiceForNextTurn [
 	self updateGhostSize	"ajusta el tamaño de la figura fantasma"
 ]
 
+{ #category : #events }
+CuadrilaterosGameWindow >> skipTurnAction [
+    "Lógica al presionar el botón de saltar turno"
+    
+    game isGameOver ifTrue: [ ^ self ].
+    
+    game currentPlayer loseLife.
+    messageLabel contents: 'Te rendiste. Pierdes 1 vida.'.
+    
+    "Pasamos turno y actualizamos todo"
+    game nextTurn.
+    self rollDiceForNextTurn.
+    self updateDisplay.
+    self checkVictory.
+]
+
+{ #category : #stepping }
+CuadrilaterosGameWindow >> step [
+    "En cada ciclo del reloj, actualizamos la posición del fantasma"
+    self updateGhostPosition.
+]
+
+{ #category : #stepping }
+CuadrilaterosGameWindow >> stepTime [
+    ^ 20
+]
+
+{ #category : #events }
+CuadrilaterosGameWindow >> takeKeyboardFocus [
+    "Obliga a Pharo a enviar las teclas a esta ventana"
+    self activeHand newKeyboardFocus: self.
+]
+
 { #category : #'game logic' }
 CuadrilaterosGameWindow >> updateDisplay [
     | content | "Eliminamos rows, cols y cell que no se usaban"
@@ -228,10 +266,42 @@ CuadrilaterosGameWindow >> updateDisplay [
                         ' | Dados: ', currentDiceRoll x asString, ' x ', currentDiceRoll y asString.
 ]
 
+{ #category : #events }
+CuadrilaterosGameWindow >> updateGhostPosition [
+    "Busca la posición actual del mouse y actualiza el fantasma"
+    | globalMousePos localPoint col row targetX targetY |
+    
+    game isGameOver ifTrue: [ ^ self ].
+    ghostMorph ifNil: [ ^ self ].
+    
+    "1. Obtenemos la posición del mouse directamente de la 'Mano' activa"
+    globalMousePos := self activeHand position.
+    
+    "2. Solo movemos si el mouse está DENTRO del tablero"
+    (boardMorph containsPoint: globalMousePos) ifFalse: [ ^ self ].
+    
+    "3. Matemática de coordenadas (igual que antes)"
+    localPoint := globalMousePos - boardMorph position.
+    
+    col := (localPoint x / cellSize) floor.
+    row := (localPoint y / cellSize) floor.
+    
+    targetX := col * cellSize.
+    targetY := row * cellSize.
+    
+    "4. Mover el fantasma"
+    ghostMorph position: boardMorph position + (targetX @ targetY).
+]
+
 { #category : #drawing }
 CuadrilaterosGameWindow >> updateGhostSize [
     "Si el fantasma existe, actualizamos su tamaño (Ancho de dados * celda)"
     ghostMorph ifNotNil: [
         ghostMorph extent: (currentDiceRoll x * cellSize) @ (currentDiceRoll y * cellSize).
     ].
+]
+
+{ #category : #stepping }
+CuadrilaterosGameWindow >> wantsSteps [
+    ^ true
 ]

@@ -14,7 +14,7 @@ Class {
 
 { #category : #initialization }
 CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPlayer [
-    "Valida si se puede colocar la figura según reglas: Límites, Superposición y Adyacencia"
+    "Valida límites, superposición (con lógica Overwrite) y adyacencia"
     
     | startX startY endX endY cellContent canOverwrite |
     startX := originPoint x.
@@ -22,22 +22,33 @@ CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPla
     endX := startX + w - 1.
     endY := startY + h - 1.
 
-    "1. Validar que la figura entera entre en el tablero (Límites)"
+    "1. Validar Límites (Esto nunca cambia)"
     ((self isValidCoordinate: originPoint) and: [ self isValidCoordinate: endX@endY ]) 
         ifFalse: [ ^ false ].
 
     "2. Validar Superposición"
-    "Preguntamos al jugador si tiene el PowerUp de sobrescribir"
+    
+    "Preguntamos si el jugador tiene el poder activo. 
+     Asegúrate de pasar la CLASE del PowerUp, no una instancia."
     canOverwrite := aPlayer hasPowerUp: PowerUpOverwrite. 
 
     startX to: endX do: [ :x |
         startY to: endY do: [ :y |
             cellContent := grid at: y at: x.
             
-            "Si la celda no está vacía y NO es un PowerUp..."
-            (cellContent notNil and: [ (cellContent isKindOf: CuadrilaterosPowerUp) not ]) ifTrue: [
-                "Si no puedo sobrescribir, es un movimiento ilegal"
-                canOverwrite ifFalse: [ ^ false ].
+            "Analizamos qué hay en la celda"
+            cellContent ifNotNil: [
+                
+                "Si es un PowerUp, siempre se puede pisar (para agarrarlo)"
+                (cellContent isKindOf: CuadrilaterosPowerUp) 
+                    ifFalse: [
+                        "Si NO es un PowerUp, es un ID de jugador (ocupado)."
+                        
+                        "Si NO tengo el poder de overwrite, es ilegal. Retorno false."
+                        canOverwrite ifFalse: [ ^ false ].
+                        
+                        "Si TENGO el poder, ignoramos que esté ocupada y seguimos (loop continúa)"
+                    ].
             ].
         ].
     ].
