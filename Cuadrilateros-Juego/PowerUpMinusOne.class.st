@@ -9,5 +9,6 @@ Class {
 
 { #category : #activation }
 PowerUpMinusOne >> activateOn: aPlayer game: aGame [
-    aPlayer addPowerUp: #minusOne.
+    "Agrega la instancia del PowerUp a los efectos activos del jugador."
+    aPlayer addPowerUp: self.
 ]

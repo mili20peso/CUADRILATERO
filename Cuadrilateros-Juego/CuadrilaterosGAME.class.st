@@ -82,11 +82,14 @@ CuadrilaterosGAME >> currentPlayer [
 
 { #category : #accesing }
 CuadrilaterosGAME >> getWinner [
-    ^ players asSortedCollection: [ :a :b | 
-        (a areaCovered > b areaCovered) or: [ 
+    "La conversion a asArray antes de enviar #first resuelve el problema de 'message not understood'."
+    
+    ^ (players asSortedCollection: [ :a :b |
+        "Retorna TRUE si 'a' (el primer elemento) debe ser considerado mejor que 'b' (orden descendente)"
+        (a areaCovered > b areaCovered) or: [
             (a areaCovered = b areaCovered) and: [ a turnsPlayed > b turnsPlayed ]
         ]
-    ] first.
+    ]) asArray first
 ]
 
 { #category : #initialization }

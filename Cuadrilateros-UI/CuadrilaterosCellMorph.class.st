@@ -11,19 +11,19 @@ Class {
 	#category : #'Cuadrilateros-UI'
 }
 
-{ #category : #accesing }
-CuadrilaterosCellMorph >> col [
-    ^ col
-]
-
-{ #category : #drawing }
-CuadrilaterosCellMorph >> colorForPlayer: anId [
-    "Mapa de colores simple"
+{ #category : #utilities }
+CuadrilaterosCellMorph class >> colorForPlayerId: anId [
+    "Método de CLASE para mapear un ID de jugador a un Color."
     anId = 1 ifTrue: [ ^ Color red ].
     anId = 2 ifTrue: [ ^ Color blue ].
     anId = 3 ifTrue: [ ^ Color green ].
     anId = 4 ifTrue: [ ^ Color yellow ].
     ^ Color gray
+]
+
+{ #category : #accesing }
+CuadrilaterosCellMorph >> col [
+    ^ col
 ]
 
 { #category : #drawing }
@@ -55,7 +55,7 @@ CuadrilaterosCellMorph >> updateStateFrom: aValue [
     "Actualiza la visualización de la celda según el contenido del tablero"
     
     "--- CORRECCIÓN ---"
-    self removeAllMorphs. "Esta es la forma correcta de limpiar una celda en Morphic"
+    self removeAllMorphs.
     "------------------"
 
     "1. Caso Vacío"
@@ -66,22 +66,19 @@ CuadrilaterosCellMorph >> updateStateFrom: aValue [
 
     "2. Caso Jugador (Número)"
     aValue isNumber ifTrue: [ 
-        self color: (self colorForPlayer: aValue).
+        self color: (self class colorForPlayerId: aValue). "Llamada al método de CLASE"
         ^ self 
     ].
 
     "3. Caso PowerUp"
     (aValue isKindOf: CuadrilaterosPowerUp) ifFalse: [ ^ self ].
-    
     "Dibujar PowerUp"
     self color: Color lightGray.
     self addMorph: (StringMorph new
                 contents: (self iconForPowerUp: aValue);
                 color: Color black;
                 yourself).
-                
     "Centrar el ícono recién agregado"
     self submorphs notEmpty ifTrue: [ 
-        self submorphs first center: self center 
-    ].
+        self submorphs first center: self center]
 ]

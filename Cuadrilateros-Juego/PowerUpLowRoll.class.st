@@ -9,5 +9,6 @@ Class {
 
 { #category : #activation }
 PowerUpLowRoll >> activateOn: aPlayer game: aGame [
-    aPlayer addPowerUp: #forceLowRoll.
+    "Agrega la instancia del PowerUp a los efectos activos del jugador."
+    aPlayer addPowerUp: self.
 ]

@@ -127,15 +127,38 @@ CuadrilaterosGameWindow >> cellClicked: anEvent from: aCell [
 
 { #category : #'game logic' }
 CuadrilaterosGameWindow >> checkVictory [
-	| winner |
+	| winner winnerColor victoryMorph text winnerId |
 	game isGameOver
 		ifFalse: [ ^ self ].
+        
 	winner := game getWinner.
-	UIManager default
-		inform: '¡JUEGO TERMINADO! El ganador es el JUGADOR ' , winner id asString.
-	messageLabel
-		contents: 'GAME OVER. Ganador: Jugador ' , winner id asString.
-	diceLabel contents: '---'
+    winnerId := winner id.
+    
+    "Llamada al método de CLASE en CuadrilaterosCellMorph para obtener el color de forma centralizada"
+	winnerColor := CuadrilaterosCellMorph colorForPlayerId: winnerId. 
+    
+    "1. Actualizar etiquetas inferiores (GAME OVER)"
+    messageLabel contents: 'GAME OVER. Ganador: Jugador ', winnerId asString.
+    diceLabel contents: '---'.
+    
+    "2. Crear el Morph de victoria que cubrirá toda la ventana"
+    victoryMorph := Morph new
+        color: (Color black alpha: 0.8); "Fondo oscuro semi-transparente"
+        bounds: self bounds; "Abarca toda la ventana"
+        yourself.
+
+    "3. Texto grande y coloreado"
+    text := 'El GANADOR es el JUGADOR ', winnerId asString.
+
+    victoryMorph addMorph: (TextMorph new 
+        contents: text;
+        font: (TextStyle default fontOfSize: 48); "Fuente grande para prominencia"
+        color: winnerColor; "Color del jugador ganador"
+        yourself).
+        
+    "4. Centrar el texto en la pantalla y añadir el morph a la ventana"
+    victoryMorph submorphs first center: victoryMorph center.
+    self addMorph: victoryMorph.
 ]
 
 { #category : #drawing }
