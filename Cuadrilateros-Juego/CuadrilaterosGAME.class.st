@@ -90,39 +90,41 @@ CuadrilaterosGAME >> getWinner [
 ]
 
 { #category : #initialization }
-CuadrilaterosGAME >> initializeWithPlayers: playerCount boardSize: size [
+CuadrilaterosGAME >> initializeWithPlayerClasses: playerClasses boardSize: size [
 	| p startPos |
-	self initialize. "decia super antes, por si falla"
+	self initialize.
 	board := CuadrilaterosBoard new.
 	board initializeSize: size.
 	dice := CuadrilaterosDice new.
 	isGameOver := false.
 	currentPlayerIndex := 1.
 	players := OrderedCollection new.
-	1 to: playerCount do: [ :i | 
-		p := CuadrilaterosPlayer new.
-		p id: i.
-		players add: p ].
-	board
-		placeShape: 1 @ 1
-		width: 1
-		height: 1
-		player: (players at: 1).
-	playerCount >= 2
+	playerClasses
+		withIndexDo: [ :playerClass :i | 
+			p := playerClass new.
+			p id: i.
+			players add: p ].
+	players size >= 1
+		ifTrue: [ board
+				placeShape: 1 @ 1
+				width: 1
+				height: 1
+				player: (players at: 1) ].
+	players size >= 2
 		ifTrue: [ startPos := size @ size.
 			board
 				placeShape: startPos
 				width: 1
 				height: 1
 				player: (players at: 2) ].
-	playerCount >= 3
+	players size >= 3
 		ifTrue: [ startPos := size @ 1.
 			board
 				placeShape: startPos
 				width: 1
 				height: 1
 				player: (players at: 3) ].
-	playerCount >= 4
+	players size >= 4
 		ifFalse: [ ^ self ].
 	startPos := 1 @ size.
 	board
@@ -192,15 +194,8 @@ CuadrilaterosGAME >> playerCannotMove [
 
 { #category : #'control flow instructions' }
 CuadrilaterosGAME >> rollDiceForCurrentPlayer [
-    | player config resultPoint |
-    
+    | player |
     player := self currentPlayer.
     
-    "1. Obtenemos el diccionario con tus claves ('+1', '<3', etc)"
-    config := player diceConfiguration. 
-    
-    "2. Llamamos a TU método roll: que devuelve un Point"
-    resultPoint := dice roll: config.
-    
-    ^ resultPoint
+    ^ player rollDiceWith: dice
 ]

@@ -120,6 +120,13 @@ CuadrilaterosPlayer >> recordTurn [
     turnsPlayed := turnsPlayed + 1.
 ]
 
+{ #category : #'game logic' }
+CuadrilaterosPlayer >> rollDiceWith: aDice [ 
+    "Usa el dado para generar la tirada con la configuración de efectos actual.
+     Este método se sobrescribe en subclases con lógica especial (ej: Suertudo, Steve)."
+    ^ aDice roll: self diceConfiguration
+]
+
 { #category : #accessing }
 CuadrilaterosPlayer >> turnsPlayed [
     "Devuelve la cantidad de turnos que el jugador ha sobrevivido"
