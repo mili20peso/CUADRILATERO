@@ -186,6 +186,7 @@ CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer
 
     "Sumamos el área al jugador (w * h)"
     aPlayer addArea: (w * h).
+	aPlayer recordFigurePlaced.
 ]
 
 { #category : #accesing }
