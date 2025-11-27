@@ -34,7 +34,6 @@ CuadrilaterosCellMorph >> iconForPowerUp: aPowerUp [
     (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ '-1' ].
     (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '<3' ].
     (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ '>3' ].
-    (aPowerUp isKindOf: PowerUpOverwrite) ifTrue: [ ^ 'λ' ].
     (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'RB' ].
     ^ '?'
 ]
