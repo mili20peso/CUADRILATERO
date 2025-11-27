@@ -74,11 +74,11 @@ CuadrilaterosBoard >> checkAdjacencyFor: originPoint width: w height: h player: 
         startY to: endY do: [ :y |
             "Para cada celda, miramos sus 4 vecinos (Arriba, Abajo, Izq, Der)"
             neighbors := { (x@y) + (0@1) . (x@y) - (0@1) . (x@y) + (1@0) . (x@y) - (1@0) }.
-            
+           
             neighbors do: [ :n |
                 (self isValidCoordinate: n) ifTrue: [
                     "Si el vecino tiene el ID del jugador, es válido"
-                    ((self contentAt: n) = aPlayer id) ifTrue: [ foundAdjacency := true ].
+                    ((self contentAt: n) = aPlayer id) ifTrue: [ foundAdjacency := true ]."hay que probar si se puede interrumpir aca"
                 ].
             ].
         ].
@@ -201,7 +201,7 @@ CuadrilaterosBoard >> spawnRandomPowerUp [
     
     "Usamos random para elegir fila y columna"
     attempts := 0.
-    maxAttempts := 10. "Para evitar bucles infinitos si el tablero está lleno"
+    maxAttempts := 20. "Para evitar bucles infinitos si el tablero está lleno"
     
     [ attempts < maxAttempts ] whileTrue: [
         r := (1 to: rows) atRandom.

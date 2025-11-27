@@ -20,13 +20,6 @@ CuadrilaterosDice >> initialize [
 ]
 
 { #category : #random }
-CuadrilaterosDice >> roll [
-    "Retorna un número para las columnas (X) de 1 a 6"
-    x:= random nextInt: 6.
-	 y:= random nextInt:6. 
-]
-
-{ #category : #random }
 CuadrilaterosDice >> roll: modifiers [
     "Calcula x e y, y devuelve un Punto (Point) listo para usar en el Tablero"
     | valX valY |

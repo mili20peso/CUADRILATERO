@@ -72,7 +72,7 @@ CuadrilaterosGameWindow >> buildUI [
 ]
 
 { #category : #events }
-CuadrilaterosGameWindow >> cellClicked: anEvent [
+CuadrilaterosGameWindow >> cellClicked: anEvent [ "CREO QUE ESTE METODO HAY QUE BORRARLO"
     "Cuando el usuario hace click en una celda, intenta poner la figura"
     | cell clickedPoint success |
     
@@ -162,8 +162,8 @@ CuadrilaterosGameWindow >> createGridCells [
 
     "3. Crear el Fantasma visual"
     ghostMorph := BorderedMorph new.
-    ghostMorph color: (Color blue alpha: 0.3). "Semi-transparente"
-    ghostMorph borderColor: Color blue.
+    ghostMorph color: (Color purple alpha: 0.5). "Semi-transparente"
+    ghostMorph borderColor: Color purple.
     ghostMorph borderWidth: 2.
     ghostMorph lock. "CRUCIAL: Hace que los clicks atraviesen el fantasma y lleguen a la celda"
     
