@@ -5,9 +5,7 @@ Class {
 	#name : #CuadrilaterosDice,
 	#superclass : #Object,
 	#instVars : [
-		'random',
-		'x',
-		'y'
+		'random'
 	],
 	#category : #'Cuadrilateros-Juego'
 }
@@ -31,7 +29,7 @@ CuadrilaterosDice >> roll: modifiers [
 ]
 
 { #category : #random }
-CuadrilaterosDice >> rollMod: modifiers [
+CuadrilaterosDice >>rollMod: modifiers [
 	
     "Genera una tirada aplicando las reglas del diccionario de configuración.
      Claves esperadas: '+1', '-1', '<3', '>3'"
@@ -45,17 +43,8 @@ CuadrilaterosDice >> rollMod: modifiers [
     result := random nextInt: 6.
     
     "REROLL"
+	result:= self aplicarRerollsA: result with: modifiers .
     
-    "Si tiene <3 (Debe ser menor a 3). Mientras sea >= 3, tira de nuevo."
-    (modifiers includesKey: '<3') ifTrue: [ 
-        [ result >= 3 ] whileTrue: [ result := random nextInt: 6 ]
-    ].
-
-    "Si tiene >3 (Debe ser mayor a 3). Mientras sea <= 3, tira de nuevo."
-    (modifiers includesKey: '>3') ifTrue: [ 
-        [ result <= 3 ] whileTrue: [ result := random nextInt: 6 ]
-    ].
-
     "MODIFICADORES +-1"
     
     "Caso: +1"
@@ -71,6 +60,27 @@ CuadrilaterosDice >> rollMod: modifiers [
     "Aseguramos que el resultado nunca sea menor a 1 tras la resta"
     ^ result max: 1
 ]
+
+{ #category : #accesing }
+CuadrilaterosDice >> aplicarRerollsA: res with: modifiers [
+
+   | resTemporal | "Declaramos una variable temporal"
+    
+    resTemporal := res. "Asignamos el valor del argumento a la variable temporal"
+
+    "Si tiene <3 (Debe ser menor a 3). Mientras sea >= 3, tira de nuevo."
+    (modifiers includesKey: '<3') ifTrue: [ 
+        [ resTemporal >= 3 ] whileTrue: [ resTemporal := random nextInt: 6 ]
+    ].
+
+    "Si tiene >3 (Debe ser mayor a 3). Mientras sea <= 3, tira de nuevo."
+    (modifiers includesKey: '>3') ifTrue: [ 
+        [ resTemporal <= 3 ] whileTrue: [ resTemporal := random nextInt: 6 ] 
+    ].
+    
+    ^ resTemporal 
+]
+
 
 { #category : #accesing }
 CuadrilaterosDice >> x [
