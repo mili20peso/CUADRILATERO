@@ -87,7 +87,7 @@ CuadrilaterosGAME >> getWinner [
     ^ (players asSortedCollection: [ :a :b |
         "Retorna TRUE si 'a' (el primer elemento) debe ser considerado mejor que 'b' (orden descendente)"
         (a areaCovered > b areaCovered) or: [
-            (a areaCovered = b areaCovered) and: [ a turnsPlayed > b turnsPlayed ]
+            (a areaCovered = b areaCovered) and: [ a figuresPlaced > b figuresPlaced ]
         ]
     ]) asArray first
 ]
