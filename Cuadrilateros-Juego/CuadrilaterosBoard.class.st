@@ -14,9 +14,9 @@ Class {
 
 { #category : #initialization }
 CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPlayer [
-    "Valida límites, superposición (con lógica Overwrite) y adyacencia"
+    "Valida límites, superposición  y adyacencia"
     
-    | startX startY endX endY cellContent canOverwrite |
+    | startX startY endX endY cellContent |
     startX := originPoint x.
     startY := originPoint y.
     endX := startX + w - 1.
@@ -26,11 +26,7 @@ CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPla
     ((self isValidCoordinate: originPoint) and: [ self isValidCoordinate: endX@endY ]) 
         ifFalse: [ ^ false ].
 
-    "2. Validar Superposición"
-    
-    "Preguntamos si el jugador tiene el poder activo. 
-     Asegúrate de pasar la CLASE del PowerUp, no una instancia."
-    canOverwrite := aPlayer hasPowerUp: PowerUpOverwrite. 
+    "2. Validar Superposición"  
 
     startX to: endX do: [ :x |
         startY to: endY do: [ :y |
@@ -43,11 +39,7 @@ CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPla
                 (cellContent isKindOf: CuadrilaterosPowerUp) 
                     ifFalse: [
                         "Si NO es un PowerUp, es un ID de jugador (ocupado)."
-                        
-                        "Si NO tengo el poder de overwrite, es ilegal. Retorno false."
-                        canOverwrite ifFalse: [ ^ false ].
-                        
-                        "Si TENGO el poder, ignoramos que esté ocupada y seguimos (loop continúa)"
+                         ^ false ]
                     ].
             ].
         ].
