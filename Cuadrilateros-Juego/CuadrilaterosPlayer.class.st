@@ -9,6 +9,7 @@ Class {
 		'lives',
 		'areaCovered',
 		'turnsPlayed',
+		'figuresPlaced',
 		'activeEffects'
 	],
 	#category : #'Cuadrilateros-Juego'
@@ -46,6 +47,18 @@ CuadrilaterosPlayer >> clearTurnEffects [
      Se debe llamar al FINAL del turno para que los efectos como 
      +1 dado o Sobrescribir no se queden para siempre."
     activeEffects removeAll.
+]
+
+{ #category : #'game logic' }
+CuadrilaterosPlayer >> figuresPlaced [
+    "Devuelve la cantidad de figuras colocadas."
+    ^ figuresPlaced
+]
+
+{ #category : #'game logic' }
+CuadrilaterosPlayer >> recordFigurePlaced [
+    "Incrementa el contador de figuras colocadas exitosamente."
+    figuresPlaced := figuresPlaced + 1.
 ]
 
 { #category : #'game logic' }
@@ -92,6 +105,7 @@ CuadrilaterosPlayer >> initialize [
     areaCovered := 0.        "0 superficie cubierta al inicio"
     turnsPlayed := 0.        "0 turnos jugados"
     activeEffects := OrderedCollection new. "Lista vacía para guardar potenciadores"
+	figuresPlaced := 0.
 
 ]
 
