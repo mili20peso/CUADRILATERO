@@ -62,28 +62,28 @@ CuadrilaterosBoard >> checkAdjacencyFor: originPoint width: w height: h player: 
     "Revisa si alguna celda del perímetro de la nueva figura toca una celda propia.
      originPoint es x@y."
     
-    | startX startY endX endY neighbors foundAdjacency |
+    | startX startY endX endY neighbors |
     startX := originPoint x.
     startY := originPoint y.
     endX := startX + w - 1.
     endY := startY + h - 1.
-    foundAdjacency := false.
+
 
     "Iteramos sobre cada celda de la nueva figura propuesta"
     startX to: endX do: [ :x |
         startY to: endY do: [ :y |
             "Para cada celda, miramos sus 4 vecinos (Arriba, Abajo, Izq, Der)"
             neighbors := { (x@y) + (0@1) . (x@y) - (0@1) . (x@y) + (1@0) . (x@y) - (1@0) }.
-           
+            
             neighbors do: [ :n |
                 (self isValidCoordinate: n) ifTrue: [
                     "Si el vecino tiene el ID del jugador, es válido"
-                    ((self contentAt: n) = aPlayer id) ifTrue: [ foundAdjacency := true ]."hay que probar si se puede interrumpir aca"
+                    ((self contentAt: n) = aPlayer id) ifTrue: [ ^ true ].
                 ].
             ].
         ].
     ].
-    ^ foundAdjacency
+    ^ false
 ]
 
 { #category : #accesing }
