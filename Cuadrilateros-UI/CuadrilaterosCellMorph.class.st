@@ -29,7 +29,6 @@ CuadrilaterosCellMorph >> col [
 { #category : #drawing }
 CuadrilaterosCellMorph >> iconForPowerUp: aPowerUp [
     "Retorna un string/emoji segun la clase"
-    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Ø' ].
     (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ '+1' ].
     (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ '-1' ].
     (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '<3' ].

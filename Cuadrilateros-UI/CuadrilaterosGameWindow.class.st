@@ -13,7 +13,8 @@ Class {
 		'currentDiceRoll',
 		'cellSize',
 		'ghostMorph',
-		'powerUpLabel'
+		'powerUpLabel',
+		'playerStatsMorph'
 	],
 	#category : #'Cuadrilateros-UI'
 }
@@ -31,7 +32,6 @@ CuadrilaterosGameWindow >> buildUI [
         cellInset: 10.
         
     self addMorph: mainContainer frame: (0@0 extent: 1@1).
-    
     "1. Tablero"
     boardMorph := Morph new
         color: Color darkGray;
@@ -48,19 +48,33 @@ CuadrilaterosGameWindow >> buildUI [
         cellInset: 10;
         layoutInset: 10.
         
-    diceLabel := StringMorph new contents: 'DADOS: ...'; font: (TextStyle default fontOfSize: 18).
+    diceLabel := StringMorph new contents: 'DADOS: ...';
+        font: (TextStyle default fontOfSize: 18).
     messageLabel := TextMorph new contents: 'Bienvenido'; extent: 200@100; wrapFlag: true.
-    
     infoPanel addMorph: (StringMorph new contents: 'ESTADO DEL JUEGO'; font: (TextStyle default fontOfSize: 14)).
     infoPanel addMorph: diceLabel.
     infoPanel addMorph: messageLabel.
-    
+
+    "--- NUEVO: Panel de Estadísticas de Jugadores ---"
+    infoPanel addMorph: (StringMorph new contents: 'ESTADÍSTICAS'; font: (TextStyle default fontOfSize: 14)). 
+    playerStatsMorph := Morph new
+        layoutPolicy: TableLayout new;
+        listDirection: #topToBottom;
+        color: Color transparent;
+        hResizing: #spaceFill;
+        vResizing: #shrinkWrap;
+        cellInset: 5;
+        yourself.
+    infoPanel addMorph: playerStatsMorph.
+    "-------------------------------------------------"
+
     "--- NUEVO: BOTÓN DE SALTAR TURNO ---"
     skipButton := SimpleButtonMorph new.
     skipButton label: 'SALTAR TURNO (-1 Vida)'.
     skipButton color: (Color red alpha: 0.7).
     skipButton target: self.           "El botón le avisa a la Ventana"
-    skipButton actionSelector: #skipTurnAction. "Llama a este método"
+    skipButton actionSelector: #skipTurnAction.
+    "Llama a este método"
     skipButton extent: 200@40.
     
     infoPanel addMorph: skipButton.
@@ -257,7 +271,7 @@ CuadrilaterosGameWindow >> rollDiceForNextTurn [
 { #category : #drawing }
 CuadrilaterosGameWindow >> showPowerUpOverlayFor: aPlayer [ 
     "Muestra un overlay grande y blanco con los PowerUps recién adquiridos, y pausa la ejecución."
-    | acquiredPUs msgText playerColor overlayMorph textMorph targetRect |
+    | acquiredPUs msgText playerColor overlayMorph textMorph targetRect playerStatsMorph |
     
     aPlayer activeEffects ifEmpty: [ ^ self ].
     
@@ -343,34 +357,50 @@ CuadrilaterosGameWindow >> takeKeyboardFocus [
 ]
 
 { #category : #utilities }
-CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [
+CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [ 
     "Retorna una descripción en texto para un PowerUp activo."
-    
-    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Turno Bloqueado (enemigo)' ].
-    (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ 'Dado +1' ].
-    (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ 'Dado -1' ].
-    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ 'Tirada Baja Forzada (<3)' ].
-    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Tirada Alta Forzada (>3)' ].
-    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'Bloque Aleatorio Extra' ].
-    (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'Vida Extra' ].
+    (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ '¡Más 1 en siguiente tirada! :) ' ].
+    (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ '¡Menos 1 en siguiente tirada! :O' ].
+    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '¡Próxima tirada obtendrá highroll!>' ].
+    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Próxima tirada obtendrá lowroll!' ].
+    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ '¡Bloque Aleatorio Extra!' ].
+    (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ '¡+1 Vida!' ].
     ^ 'Potenciador Desconocido'
 ]
 
 { #category : #'game logic' }
 CuadrilaterosGameWindow >> updateDisplay [
-    | content | "Eliminamos rows, cols y cell que no se usaban"
+    | content playerString |
+    "Eliminamos rows, cols y cell que no se usaban"
     
     "Actualizar cada celda"
-    boardMorph submorphs do: [ :m | 
+    boardMorph submorphs do: [ :m |
         (m isKindOf: CuadrilaterosCellMorph) ifTrue: [
             content := game board contentAt: (m col @ m row).
             m updateStateFrom: content.
         ].
     ].
 
-    "Actualizar Etiquetas"
+    "--- NUEVO: Actualizar Panel de Estadísticas de Jugadores ---"
+    playerStatsMorph removeAllMorphs.
+    game players do: [ :p |
+        playerString := String streamContents: [ :stream |
+            stream 
+                nextPutAll: 'JUGADOR ', p id asString;
+                nextPutAll: ' (';
+                nextPutAll: p lives asString;
+                nextPutAll: ' Vidas) | Área: ';
+                "Usamos printShowingDecimalPlaces para mostrar correctamente puntajes decimales"
+                nextPutAll: (p areaCovered printShowingDecimalPlaces: 2). 
+        ].
+        playerStatsMorph addMorph: (StringMorph new contents: playerString).
+    ].
+    "----------------------------------------------------------"
+
+    "Actualizar Etiquetas de Turno"
     diceLabel contents: 'JUGADOR ', game currentPlayer id asString, 
-                        ' | Dados: ', currentDiceRoll x asString, ' x ', currentDiceRoll y asString.
+                        ' |
+Dados: ', currentDiceRoll x asString, ' x ', currentDiceRoll y asString.
 ]
 
 { #category : #events }

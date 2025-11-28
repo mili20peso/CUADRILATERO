@@ -19,3 +19,10 @@ CuadrilaterosPowerUp class >> randomSubclass [
 CuadrilaterosPowerUp >> activateOn: aPlayer game: aGame [
     self subclassResponsibility
 ]
+
+{ #category : #configuration }
+CuadrilaterosPowerUp >> applyDiceModifierTo: aDictionary [
+    "Default: PowerUps that do not affect the dice do not modify the dictionary.
+     Subclasses must override this to inject a modifier."
+    ^ aDictionary
+]

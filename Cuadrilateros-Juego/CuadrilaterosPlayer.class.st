@@ -56,19 +56,15 @@ CuadrilaterosPlayer >> clearTurnEffects [
 
 { #category : #'game logic' }
 CuadrilaterosPlayer >> diceConfiguration [
-    "Genera el diccionario con las claves exactas que espera tu método rollMod:"
+    "Generates the dictionary with the exact keys expected by the dice.
+     Uses Polymorphism, delegating the responsibility to each PowerUp."
     | config |
     config := Dictionary new.
     
-    activeEffects do: [ :effect | 
-        "Traducimos los PowerUps a tus Strings claves"
-        
-        (effect isKindOf: PowerUpPlusOne)  ifTrue: [ config at: '+1' put: true ].
-        (effect isKindOf: PowerUpMinusOne) ifTrue: [ config at: '-1' put: true ].
-        (effect isKindOf: PowerUpLowRoll)  ifTrue: [ config at: '<3' put: true ].
-        (effect isKindOf: PowerUpHighRoll) ifTrue: [ config at: '>3' put: true ].
+    activeEffects do: [ :effect |
+        "Sends the polymorphic message to the PowerUp. Only dice PowerUps will modify 'config'."
+        effect applyDiceModifierTo: config.
     ].
-
     ^ config
 ]
 

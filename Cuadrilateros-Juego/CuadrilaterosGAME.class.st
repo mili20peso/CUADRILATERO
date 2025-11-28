@@ -44,26 +44,6 @@ CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [
     ^ success
 ]
 
-{ #category : #extra }
-CuadrilaterosGAME >> blockNextPlayer [
-    "Busca al siguiente jugador en la ronda y le agrega el efecto de bloqueo"
-    
-    | nextIndex nextPlayer blockingEffect |
-    
-    "1. Calculamos el índice del siguiente jugador (Matemática circular)"
-    nextIndex := (currentPlayerIndex \\ players size) + 1.
-    
-    "2. Obtenemos al jugador víctima"
-    nextPlayer := players at: nextIndex.
-    
-    "3. Creamos una instancia del bloqueo para usarla como 'marca'"
-    blockingEffect := PowerUpBlockTurn new.
-    
-    "4. Se la enchufamos al enemigo en sus efectos activos"
-    nextPlayer addPowerUp: blockingEffect.
-    
-]
-
 { #category : #accesing }
 CuadrilaterosGAME >> board [
     ^ board
@@ -162,17 +142,7 @@ CuadrilaterosGAME >> nextTurn [
         ^ self nextTurn "Recursividad: Saltamos al siguiente inmediatamente"
     ].
 
-    "5. CASO B: El jugador está VIVO pero BLOQUEADO"
-    (nextPlayer hasPowerUp: PowerUpBlockTurn) ifTrue: [
-        "Le quitamos el bloqueo (se consume)"
-        nextPlayer activeEffects removeAllSuchThat: [:e | e isKindOf: PowerUpBlockTurn].
-        
-        Transcript show: 'Saltando turno de Jugador ', nextPlayer id asString; cr.
-        
-        ^ self nextTurn "Recursividad: Lo saltamos y buscamos al siguiente"
-    ].
-
-    "6. CASO C: Jugador válido. Comienza su turno."
+    "5. CASO C: Jugador válido. Comienza su turno."
     "Generar probabilidad de PowerUp en el mapa (ej: 20%)"
     
     nextPlayer recordTurn.
@@ -188,6 +158,11 @@ CuadrilaterosGAME >> playerCannotMove [
     "El jugador pierde una vida y se pasa el turno"
     self currentPlayer loseLife.
     self nextTurn.
+]
+
+{ #category : #accesing }
+CuadrilaterosGAME >> players [
+    ^ players
 ]
 
 { #category : #'control flow instructions' }
