@@ -43,7 +43,6 @@ CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPla
                     ].
             ].
         ].
-    ].
 
     "3. Validar Adyacencia (Obligatorio tocar territorio propio)"
     ^ self checkAdjacencyFor: originPoint width: w height: h player: aPlayer.

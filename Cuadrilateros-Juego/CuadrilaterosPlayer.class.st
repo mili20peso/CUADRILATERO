@@ -50,18 +50,6 @@ CuadrilaterosPlayer >> clearTurnEffects [
 ]
 
 { #category : #'game logic' }
-CuadrilaterosPlayer >> figuresPlaced [
-    "Devuelve la cantidad de figuras colocadas."
-    ^ figuresPlaced
-]
-
-{ #category : #'game logic' }
-CuadrilaterosPlayer >> recordFigurePlaced [
-    "Incrementa el contador de figuras colocadas exitosamente."
-    figuresPlaced := figuresPlaced + 1.
-]
-
-{ #category : #'game logic' }
 CuadrilaterosPlayer >> diceConfiguration [
     "Genera el diccionario con las claves exactas que espera tu método rollMod:"
     | config |
@@ -77,6 +65,12 @@ CuadrilaterosPlayer >> diceConfiguration [
     ].
 
     ^ config
+]
+
+{ #category : #'game logic' }
+CuadrilaterosPlayer >> figuresPlaced [
+    "Devuelve la cantidad de figuras colocadas."
+    ^ figuresPlaced
 ]
 
 { #category : #accessing }
@@ -125,6 +119,12 @@ CuadrilaterosPlayer >> lives [
 CuadrilaterosPlayer >> loseLife [
     "Resta una vida al jugador. Se invoca cuando no puede colocar figura."
     lives := lives - 1.
+]
+
+{ #category : #'game logic' }
+CuadrilaterosPlayer >> recordFigurePlaced [
+    "Incrementa el contador de figuras colocadas exitosamente."
+    figuresPlaced := figuresPlaced + 1.
 ]
 
 { #category : #accessing }
