@@ -15,35 +15,30 @@ Class {
 }
 
 { #category : #'control flow instructions' }
-CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [
-    "Intenta colocar la figura. Retorna true si tuvo éxito, false si falló.
-     aPointDimensions: (ancho @ alto) que salieron en los dados.
-     originPoint: Coordenada (x @ y) donde el jugador quiere poner la esq. sup. izq."
-    
-    | player success |
+CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [ 
+    "Intenta colocar la figura. Retorna true si tuvo éxito, false si falló."
+    | player success acquiredPowerUps | 
     player := self currentPlayer.
     
-    "1. Preguntar al tablero si es válido"
     success := board canPlaceShape: originPoint 
                      width: aPointDimensions x 
                      height: aPointDimensions y 
                      player: player.
-                     
-    success ifTrue: [
-        "2. Si es válido: Colocar y aplicar efectos"
-        board placeShape: originPoint 
+
+    success ifTrue: [ 
+        "Capturamos los PowerUps y marcamos el tablero"
+        acquiredPowerUps := board placeShape: originPoint 
               width: aPointDimensions x 
               height: aPointDimensions y 
-              player: player.
-              
-        "Revisar si tenía el PowerUp RandomBlock y ejecutarlo ahora"
-        (player hasPowerUp: PowerUpRandomBlock) ifTrue: [
-             board placeRandomBlockFor: player.
+              player: player. 
+
+        "Activamos PowerUps adquiridos, añadiéndolos a activeEffects (si son de turno) o aplicando su efecto instantáneo"
+        acquiredPowerUps do: [ :powerUp |
+            powerUp activateOn: player game: self. 
         ].
+        
     ] ifFalse: [
-        "3. Si no es válido: El método retorna false.
-         NOTA: Aquí NO quitamos vida. La vida se quita si NO HAY NINGÚN movimiento posible.
-         Este método solo dice si ESTE movimiento específico es válido."
+        "..."
     ].
 
     ^ success
@@ -196,9 +191,12 @@ CuadrilaterosGAME >> playerCannotMove [
 ]
 
 { #category : #'control flow instructions' }
-CuadrilaterosGAME >> rollDiceForCurrentPlayer [
+CuadrilaterosGAME >> rollDiceForCurrentPlayer [ 
     | player |
     player := self currentPlayer.
+    
+    "* LIMPIAMOS los efectos persistentes del turno anterior *"
+    player clearTurnEffects. 
     
     ^ player rollDiceWith: dice
 ]

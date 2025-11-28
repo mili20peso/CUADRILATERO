@@ -12,7 +12,8 @@ Class {
 		'messageLabel',
 		'currentDiceRoll',
 		'cellSize',
-		'ghostMorph'
+		'ghostMorph',
+		'powerUpLabel'
 	],
 	#category : #'Cuadrilateros-UI'
 }
@@ -96,27 +97,40 @@ CuadrilaterosGameWindow >> cellClicked: anEvent [ "CREO QUE ESTE METODO HAY QUE 
 ]
 
 { #category : #events }
-CuadrilaterosGameWindow >> cellClicked: anEvent from: aCell [
-    "Ahora recibimos la celda directamente como segundo argumento"
-    | clickedPoint success |
+CuadrilaterosGameWindow >> cellClicked: anEvent from: aCell [ 
+    | clickedPoint success player |
     
     game isGameOver ifTrue: [ ^ self ].
+    clickedPoint := aCell col @ aCell row.
     
-    "Ya no necesitamos anEvent receiver, usamos aCell directamente"
-    clickedPoint := aCell col @ aCell row. 
-    
-    "Intentamos colocar la figura"
+    player := game currentPlayer. 
     success := game attemptPlaceShape: currentDiceRoll at: clickedPoint.
     
     success ifTrue: [
+        
+        "*** LLAMADA AL OVERLAY (Pausa y efecto visual) ***"
+        self showPowerUpOverlayFor: player.
+        
         messageLabel contents: '¡Jugada exitosa! Turno siguiente.'.
-        game nextTurn.
+        
+        self updateDisplay. 
+        self world displayWorld. 
+        
+        "*** LIMPIEZA SELECTIVA: Se eliminan PowerUps instantáneos del jugador actual ***"
+        player activeEffects removeAllSuchThat: [ :pu |
+            (pu isKindOf: PowerUpExtraLife) or: [ pu isKindOf: PowerUpRandomBlock ]
+        ].
+        
+        game nextTurn. 
+        
         self rollDiceForNextTurn.
-        self updateDisplay.
+        self updateDisplay. 
         self checkVictory.
     ] ifFalse: [
-        messageLabel contents: 'Movimiento INVÁLIDO. Revisa adyacencia o espacio.'. 
+        messageLabel contents: 'Movimiento INVÁLIDO.
+        Revisa adyacencia o espacio.'. 
         ].
+ 
 ]
 
 { #category : #'game logic' }
@@ -190,9 +204,31 @@ CuadrilaterosGameWindow >> createGridCells [
     self updateGhostSize.
 ]
 
+{ #category : #'as yet unclassified' }
+CuadrilaterosGameWindow >> extForPowerUp: aPowerUp [ 
+    "Retorna una descripción en texto para un PowerUp activo."
+    
+    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Turno Bloqueado (enemigo)' ].
+    (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ 'Dado +1' ].
+    (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ 'Dado -1' ].
+    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ 'Tirada Baja Forzada (<3)' ].
+    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Tirada Alta Forzada (>3)' ].
+    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'Bloque Aleatorio Extra' ].
+    (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'Vida Extra' ].
+    ^ 'Potenciador Desconocido'
+
+]
+
 { #category : #events }
 CuadrilaterosGameWindow >> handlesKeyboard [
     ^ true
+]
+
+{ #category : #accessing }
+CuadrilaterosGameWindow >> infoPanel [ 
+    "Devuelve el panel de información (Morph) para su manipulación."
+    ^ infoPanel
+
 ]
 
 { #category : #initialization }
@@ -233,6 +269,61 @@ CuadrilaterosGameWindow >> rollDiceForNextTurn [
 	self updateGhostSize	"ajusta el tamaño de la figura fantasma"
 ]
 
+{ #category : #'as yet unclassified' }
+CuadrilaterosGameWindow >> showPowerUpOverlayFor: aPlayer [ 
+    "Muestra un overlay grande y blanco con los PowerUps recién adquiridos, y pausa la ejecución."
+    | acquiredPUs msgText playerColor overlayMorph textMorph targetRect |
+    
+    aPlayer activeEffects ifEmpty: [ ^ self ].
+    
+    "1. Obtener la lista de PowerUps y generar el texto grande"
+    acquiredPUs := aPlayer activeEffects.
+    
+    "Usamos String streamContents: para compatibilidad total con el entorno"
+    msgText := String streamContents: [ :stream |
+        acquiredPUs withIndexDo: [ :pu :i |
+            stream nextPutAll: (self textForPowerUp: pu) , ' (Ganado)'.
+            i < acquiredPUs size ifTrue: [ stream cr ] 
+        ]
+    ].
+    
+    "Obtenemos el color del jugador para el texto"
+    playerColor := CuadrilaterosCellMorph colorForPlayerId: aPlayer id. 
+    
+    textMorph := TextMorph new 
+        contents: '¡POTENCIADOR ADQUIRIDO!' , Character cr asString , msgText;
+        font: (TextStyle default fontOfSize: 36);
+        color: playerColor; 
+        yourself.
+        
+    "2. Crear el Overlay: Calculamos el rectángulo blanco centrado"
+    targetRect := (self bounds center - (200@150)) extent: (400@300).
+    
+    overlayMorph := Morph new
+        color: Color white;
+        borderWidth: 2; 
+        borderColor: Color black;
+        yourself.
+        
+    "3. Asignar Bounds y Centrar"
+    overlayMorph bounds: targetRect. 
+    
+    overlayMorph addMorph: textMorph.
+    textMorph center: overlayMorph bounds center.
+    
+    self addMorph: overlayMorph.
+    self world displayWorld. 
+    
+    "4. Pausar el hilo de ejecución por 1.5 segundos"
+    (Delay forSeconds: 1.5) wait.
+    
+    "5. Eliminar el overlay"
+    self removeMorph: overlayMorph.
+    self world displayWorld.
+    
+    self infoPanel changed.
+]
+
 { #category : #events }
 CuadrilaterosGameWindow >> skipTurnAction [
     "Lógica al presionar el botón de saltar turno"
@@ -264,6 +355,21 @@ CuadrilaterosGameWindow >> stepTime [
 CuadrilaterosGameWindow >> takeKeyboardFocus [
     "Obliga a Pharo a enviar las teclas a esta ventana"
     self activeHand newKeyboardFocus: self.
+]
+
+{ #category : #'as yet unclassified' }
+CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [ 
+    "Retorna una descripción en texto para un PowerUp activo."
+    
+    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Turno Bloqueado (enemigo)' ].
+    (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ 'Dado +1' ].
+    (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ 'Dado -1' ].
+    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ 'Tirada Baja Forzada (<3)' ].
+    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Tirada Alta Forzada (>3)' ].
+    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'Bloque Aleatorio Extra' ].
+    (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'Vida Extra' ].
+    ^ 'Potenciador Desconocido'
+
 ]
 
 { #category : #'game logic' }
