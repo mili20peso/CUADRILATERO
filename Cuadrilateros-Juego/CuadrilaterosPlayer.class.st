@@ -28,6 +28,11 @@ CuadrilaterosPlayer >> addArea: anInteger [
     areaCovered := areaCovered + anInteger.
 ]
 
+{ #category : #adding }
+CuadrilaterosPlayer >> addLife [
+lives:= lives + 1
+]
+
 { #category : #accessing }
 CuadrilaterosPlayer >> addPowerUp: aPowerUp [
     "Agrega un potenciador a la lista de efectos activos.

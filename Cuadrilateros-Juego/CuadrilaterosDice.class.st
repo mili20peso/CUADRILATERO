@@ -80,13 +80,3 @@ CuadrilaterosDice >> rollMod: modifiers [
     "Aseguramos que el resultado nunca sea menor a 1 tras la resta"
     ^ result max: 1
 ]
-
-{ #category : #accesing }
-CuadrilaterosDice >> x [
-	^x
-]
-
-{ #category : #accesing }
-CuadrilaterosDice >> y [
-	^y
-]

@@ -115,11 +115,8 @@ CuadrilaterosGameWindow >> cellClicked: anEvent from: aCell [
         self updateDisplay.
         self checkVictory.
     ] ifFalse: [
-        messageLabel contents: 'Movimiento INVÁLIDO. Revisa adyacencia o espacio.'.
-        (game currentPlayer hasPowerUp: PowerUpOverwrite) ifTrue: [
-             messageLabel contents: messageLabel contents, ' (Tienes Overwrite activo)'.
+        messageLabel contents: 'Movimiento INVÁLIDO. Revisa adyacencia o espacio.'. 
         ].
-    ].
 ]
 
 { #category : #'game logic' }
