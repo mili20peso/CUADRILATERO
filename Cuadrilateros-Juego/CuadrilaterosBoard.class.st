@@ -152,10 +152,11 @@ CuadrilaterosBoard >> placeRandomBlockFor: aPlayer [
 ]
 
 { #category : #initialization }
-CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer [
+CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer [ 
     "Dibuja la figura en el tablero, consume PowerUps y actualiza el área del jugador"
     
-    | startX startY endX endY cellContent |
+    | startX startY endX endY cellContent acquiredPowerUps |
+    acquiredPowerUps := OrderedCollection new. "Lista para devolver PowerUps"
     startX := originPoint x.
     startY := originPoint y.
     endX := startX + w - 1.
@@ -165,9 +166,11 @@ CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer
         startY to: endY do: [ :y |
             cellContent := grid at: y at: x.
             
-            "Si pisamos un PowerUp, se lo damos al jugador"
-            (cellContent isKindOf: CuadrilaterosPowerUp) ifTrue: [
-                aPlayer addPowerUp: cellContent.
+            "Guardia: Solo si NO es nil y es un PowerUp, lo recogemos"
+            cellContent ifNotNil: [ 
+                (cellContent isKindOf: CuadrilaterosPowerUp) ifTrue: [
+                    acquiredPowerUps add: cellContent.
+                ]
             ].
             
             "Marcamos la celda con el ID del jugador"
@@ -175,9 +178,11 @@ CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer
         ].
     ].
 
-    "Sumamos el área al jugador (w * h)"
     aPlayer addArea: (w * h).
-	aPlayer recordFigurePlaced.
+    aPlayer recordFigurePlaced.
+
+    ^ acquiredPowerUps "Devolvemos los PowerUps encontrados"
+
 ]
 
 { #category : #accesing }
