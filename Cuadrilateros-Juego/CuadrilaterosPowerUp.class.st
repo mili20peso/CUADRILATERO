@@ -1,6 +1,3 @@
-"
-Clase abstracta de potenciadores
-"
 Class {
 	#name : #CuadrilaterosPowerUp,
 	#superclass : #Object,

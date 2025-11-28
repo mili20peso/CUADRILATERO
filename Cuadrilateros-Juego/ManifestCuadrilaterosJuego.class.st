@@ -1,6 +1,3 @@
-"
-???
-"
 Class {
 	#name : #ManifestCuadrilaterosJuego,
 	#superclass : #PackageManifest,

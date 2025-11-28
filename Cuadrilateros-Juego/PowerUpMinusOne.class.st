@@ -1,6 +1,3 @@
-"
-Potenciador dado menos 1
-"
 Class {
 	#name : #PowerUpMinusOne,
 	#superclass : #CuadrilaterosPowerUp,

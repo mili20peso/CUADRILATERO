@@ -1,6 +1,3 @@
-"
-Clase Inicializadora, se encarga de iniciar el juego y prescindir de un script lanzador
-"
 Class {
 	#name : #CuadrilaterosLauncher,
 	#superclass : #Object,

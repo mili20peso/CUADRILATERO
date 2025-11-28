@@ -1,8 +1,3 @@
-"
-Subclase de jugador: Tanque
-Mas vida
-Menos puntaje
-"
 Class {
 	#name : #CuadrilaterosPlayerTanque,
 	#superclass : #CuadrilaterosPlayer,

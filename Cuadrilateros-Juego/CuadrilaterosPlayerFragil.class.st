@@ -1,8 +1,3 @@
-"
-Subclase de jugador: STEVE
-Mas puntos
-Un error = Muerte
-"
 Class {
 	#name : #CuadrilaterosPlayerFragil,
 	#superclass : #CuadrilaterosPlayer,

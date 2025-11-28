@@ -1,6 +1,3 @@
-"
-Potenciados dados mas bajos
-"
 Class {
 	#name : #PowerUpLowRoll,
 	#superclass : #CuadrilaterosPowerUp,

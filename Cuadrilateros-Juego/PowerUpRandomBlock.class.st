@@ -1,6 +1,3 @@
-"
-Potenciador bloque 1x1 aleatorio
-"
 Class {
 	#name : #PowerUpRandomBlock,
 	#superclass : #CuadrilaterosPowerUp,

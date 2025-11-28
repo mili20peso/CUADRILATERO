@@ -1,6 +1,3 @@
-"
-Clase tablero
-"
 Class {
 	#name : #CuadrilaterosBoard,
 	#superclass : #Object,
@@ -22,36 +19,34 @@ CuadrilaterosBoard >> canPlaceShape: originPoint width: w height: h player: aPla
     endX := startX + w - 1.
     endY := startY + h - 1.
 
-    "1. Validar Límites (Esto nunca cambia)"
+    "Validar Límites"
     ((self isValidCoordinate: originPoint) and: [ self isValidCoordinate: endX@endY ]) 
         ifFalse: [ ^ false ].
 
-    "2. Validar Superposición"  
+    "Validar Superposición"  
 
     startX to: endX do: [ :x |
         startY to: endY do: [ :y |
             cellContent := grid at: y at: x.
             
-            "Analizamos qué hay en la celda"
             cellContent ifNotNil: [
                 
-                "Si es un PowerUp, siempre se puede pisar (para agarrarlo)"
+                "Si es un PowerUp, siempre se puede pisar"
                 (cellContent isKindOf: CuadrilaterosPowerUp) 
                     ifFalse: [
-                        "Si NO es un PowerUp, es un ID de jugador (ocupado)."
+                        "Si NO es un PowerUp, esta ocupado."
                          ^ false ]
                     ].
             ].
         ].
 
-    "3. Validar Adyacencia (Obligatorio tocar territorio propio)"
+    "Validar Adyacencia"
     ^ self checkAdjacencyFor: originPoint width: w height: h player: aPlayer.
 ]
 
 { #category : #initialization }
 CuadrilaterosBoard >> checkAdjacencyFor: originPoint width: w height: h player: aPlayer [
-    "Revisa si alguna celda del perímetro de la nueva figura toca una celda propia.
-     originPoint es x@y."
+    "Revisa si existe adyacencia entre las figuras del jugador y esta nueva figura."
     
     | startX startY endX endY neighbors |
     startX := originPoint x.
@@ -60,7 +55,7 @@ CuadrilaterosBoard >> checkAdjacencyFor: originPoint width: w height: h player: 
     endY := startY + h - 1.
 
 
-    "Iteramos sobre cada celda de la nueva figura propuesta"
+    "Recorremos toda la figura (no es 100% eficiente pero es poco el trabajo extra)"
     startX to: endX do: [ :x |
         startY to: endY do: [ :y |
             "Para cada celda, miramos sus 4 vecinos (Arriba, Abajo, Izq, Der)"
@@ -68,8 +63,9 @@ CuadrilaterosBoard >> checkAdjacencyFor: originPoint width: w height: h player: 
             
             neighbors do: [ :n |
                 (self isValidCoordinate: n) ifTrue: [
-                    "Si el vecino tiene el ID del jugador, es válido"
+                    "Si un vecino tiene el ID del jugador, es válido"
                     ((self contentAt: n) = aPlayer id) ifTrue: [ ^ true ].
+						  "Con encontrar uno sale directamente devolviendo true"
                 ].
             ].
         ].
@@ -85,7 +81,7 @@ CuadrilaterosBoard >> columns [
 
 { #category : #initialization }
 CuadrilaterosBoard >> contentAt: aPoint [
-    "Devuelve lo que hay en esa celda: nil, un ID de jugador o un PowerUp"
+    "Devuelve el contenido de la celda: nil, un ID de jugador o un PowerUp"
     (self isValidCoordinate: aPoint) 
         ifTrue: [ ^ grid at: aPoint y at: aPoint x ] 
         ifFalse: [ ^ nil ].
@@ -93,20 +89,20 @@ CuadrilaterosBoard >> contentAt: aPoint [
 
 { #category : #initialization }
 CuadrilaterosBoard >> initializeSize: anInteger [
-    "Crea un tablero cuadrado de anInteger x anInteger.
-     anInteger puede ser 16, 20 o 24 según la consigna."
+    "Crea un tablero cuadrado de el valor de entrada tanto de alto como ancho.
+     Puede ser 16, 20 o 24 según la eleccion."
     
-    self initialize. "me lo cambiaron por self, antes era super, por si falla"
+    self initialize.
     rows := anInteger.
     columns := anInteger.
     
-    "Creamos una Matriz llena de nils (vacía)"
-    grid := Array2D new: rows tabulate: [ :r :c | nil ]. "antes d ecia matrix en vez de array2d, por si falla"
+    "Creamos una Matriz vacía"
+    grid := Array2D new: rows tabulate: [ :r :c | nil ].
 ]
 
 { #category : #initialization }
 CuadrilaterosBoard >> isValidCoordinate: aPoint [
-    "Verifica que el punto (x@y) esté dentro de los límites del tablero"
+    "Verifica que el punto x y esté dentro del tablero"
     ^ (aPoint x between: 1 and: columns) and: [ aPoint y between: 1 and: rows ]
 ]
 
@@ -120,23 +116,23 @@ CuadrilaterosBoard >> placeRandomBlockFor: aPlayer [
     maxAttempts := 50. "Intentamos 50 veces encontrar un lugar al azar"
     attempts := 0.
     
-    "--- INTENTO ALEATORIO ---"
+    "INTENTO ALEATORIO"
     [ attempts < maxAttempts ] whileTrue: [
         x := (1 to: columns) atRandom.
         y := (1 to: rows) atRandom.
         
-        "Si la celda es nil (vacía), la ocupamos y terminamos"
+        "Si la celda es nil, la ocupamos y terminamos"
         (grid at: y at: x) isNil ifTrue: [
             grid at: y at: x put: aPlayer id.
             aPlayer addArea: 1.
-            ^ self "Salimos del método inmediatamente"
+            ^ self "Salimos del método"
         ].
         
         attempts := attempts + 1.
     ].
 
-    "--- INTENTO LINEAL ---"
-    "Si el azar falla, para garantizar que el PowerUp funcione, recorremos todo linealmente."
+    "INTENTO LINEAL"
+    "Si el azar falla, para garantizar que el poder funcione, recorremos todo linealmente."
     
     1 to: rows do: [ :r |
         1 to: columns do: [ :c |
@@ -148,15 +144,15 @@ CuadrilaterosBoard >> placeRandomBlockFor: aPlayer [
         ].
     ].
     
-    "Si llega aquí, el tablero está 100% lleno y no se hace nada."
+    "Si llega hasta esta instancia, el tablero está 100% lleno y no se hace nada."
 ]
 
 { #category : #initialization }
 CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer [ 
-    "Dibuja la figura en el tablero, consume PowerUps y actualiza el área del jugador"
+    "Dibuja la figura en el tablero, consume potenciadores y actualiza el puntaje"
     
     | startX startY endX endY cellContent acquiredPowerUps |
-    acquiredPowerUps := OrderedCollection new. "Lista para devolver PowerUps"
+    acquiredPowerUps := OrderedCollection new. "Lista para guardar potenciadores"
     startX := originPoint x.
     startY := originPoint y.
     endX := startX + w - 1.
@@ -166,7 +162,7 @@ CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer
         startY to: endY do: [ :y |
             cellContent := grid at: y at: x.
             
-            "Guardia: Solo si NO es nil y es un PowerUp, lo recogemos"
+            "Nill no puede procesar isKindOf, por lo que creamos una guarda"
             cellContent ifNotNil: [ 
                 (cellContent isKindOf: CuadrilaterosPowerUp) ifTrue: [
                     acquiredPowerUps add: cellContent.
@@ -181,7 +177,7 @@ CuadrilaterosBoard >> placeShape: originPoint width: w height: h player: aPlayer
     aPlayer addArea: (w * h).
     aPlayer recordFigurePlaced.
 
-    ^ acquiredPowerUps "Devolvemos los PowerUps encontrados"
+    ^ acquiredPowerUps "Devolvemos los potenciadores encontrados"
 
 ]
 
@@ -193,12 +189,11 @@ CuadrilaterosBoard >> rows [
 
 { #category : #initialization }
 CuadrilaterosBoard >> spawnRandomPowerUp [
-    "Intenta colocar un PowerUp aleatorio en una celda vacía"
+    "Intenta colocar un PowerUp en una celda vacía"
     | r c attempts maxAttempts |
-    
-    "Usamos random para elegir fila y columna"
+
     attempts := 0.
-    maxAttempts := 20. "Para evitar bucles infinitos si el tablero está lleno"
+    maxAttempts := 20. "Para evitar bucles infinitos, establecemos un maximo de intentos"
     
     [ attempts < maxAttempts ] whileTrue: [
         r := (1 to: rows) atRandom.

@@ -1,6 +1,3 @@
-"
-Clase Jugador de Cuadrilateros
-"
 Class {
 	#name : #CuadrilaterosPlayer,
 	#superclass : #Object,

@@ -1,6 +1,3 @@
-"
-Clase dados
-"
 Class {
 	#name : #CuadrilaterosDice,
 	#superclass : #Object,
@@ -10,24 +7,14 @@ Class {
 	#category : #'Cuadrilateros-Juego'
 }
 
-{ #category : #accesing }
-CuadrilaterosDice >> aplicarRerollsA: res with: modifiers [
-
-   | resTemporal | "Declaramos una variable temporal"
-    
-    resTemporal := res. "Asignamos el valor del argumento a la variable temporal"
-
-    "Si tiene <3 (Debe ser menor a 3). Mientras sea >= 3, tira de nuevo."
-    (modifiers includesKey: '<3') ifTrue: [ 
-        [ resTemporal >= 3 ] whileTrue: [ resTemporal := random nextInt: 6 ]
-    ].
-
-    "Si tiene >3 (Debe ser mayor a 3). Mientras sea <= 3, tira de nuevo."
-    (modifiers includesKey: '>3') ifTrue: [ 
-        [ resTemporal <= 3 ] whileTrue: [ resTemporal := random nextInt: 6 ] 
-    ].
-    
-    ^ resTemporal 
+{ #category : #random }
+CuadrilaterosDice >> generator: modifiers [
+	|result|
+	result := random nextInt: 6.
+	 (modifiers isNil or: [ modifiers isEmpty ]) 
+        ifTrue: [ ^ result ] 
+        ifFalse: [ ^ self rollMod: modifiers num:result ]. 
+	"interrumpe si no hay modifiers"
 ]
 
 { #category : #initialization }
@@ -42,28 +29,32 @@ CuadrilaterosDice >> roll: modifiers [
     "Calcula x e y, y devuelve un Punto (Point) listo para usar en el Tablero"
     | valX valY |
     
-    valX := self rollMod: modifiers.
-    valY := self rollMod: modifiers.
+    valX := self generator: modifiers.
+    valY := self generator: modifiers.
     
     ^ valX @ valY  "Esto devuelve un objeto Point (ej: 3@5)"
 ]
 
 { #category : #random }
-CuadrilaterosDice >> rollMod: modifiers [
+CuadrilaterosDice >> rollMod: modifiers num: tirada [
 	
     "Genera una tirada aplicando las reglas del diccionario de configuración.
      Claves esperadas: '+1', '-1', '<3', '>3'"
     
     | result |
 
-	 (modifiers isNil or: [ modifiers isEmpty ]) ifTrue: [ ^ random nextInt: 6 ]. 
-	"interrumpe si no hay modifiers"
+    result:= tirada.
+
     
-    "BASE"
-    result := random nextInt: 6.
-    
-    "REROLL"
-	result:= self aplicarRerollsA: result with: modifiers .
+    "Si tiene <3 (Debe ser menor a 3). Mientras sea >= 3, tira de nuevo."
+    (modifiers includesKey: '<3') ifTrue: [ 
+        [ result >= 3 ] whileTrue: [ result := random nextInt: 6 ]
+    ].
+
+    "Si tiene >3 (Debe ser mayor a 3). Mientras sea <= 3, tira de nuevo."
+    (modifiers includesKey: '>3') ifTrue: [ 
+        [ result <= 3 ] whileTrue: [ result := random nextInt: 6 ] 
+    ].
     
     "MODIFICADORES +-1"
     

@@ -1,6 +1,3 @@
-"
-Potenciador dados mas altos
-"
 Class {
 	#name : #PowerUpHighRoll,
 	#superclass : #CuadrilaterosPowerUp,

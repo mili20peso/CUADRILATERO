@@ -1,6 +1,3 @@
-"
-Classe contenedora de juego
-"
 Class {
 	#name : #CuadrilaterosGAME,
 	#superclass : #Object,
