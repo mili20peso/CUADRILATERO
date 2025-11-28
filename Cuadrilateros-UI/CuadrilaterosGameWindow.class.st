@@ -204,21 +204,6 @@ CuadrilaterosGameWindow >> createGridCells [
     self updateGhostSize.
 ]
 
-{ #category : #'as yet unclassified' }
-CuadrilaterosGameWindow >> extForPowerUp: aPowerUp [ 
-    "Retorna una descripción en texto para un PowerUp activo."
-    
-    (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Turno Bloqueado (enemigo)' ].
-    (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ 'Dado +1' ].
-    (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ 'Dado -1' ].
-    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ 'Tirada Baja Forzada (<3)' ].
-    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Tirada Alta Forzada (>3)' ].
-    (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'Bloque Aleatorio Extra' ].
-    (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'Vida Extra' ].
-    ^ 'Potenciador Desconocido'
-
-]
-
 { #category : #events }
 CuadrilaterosGameWindow >> handlesKeyboard [
     ^ true
@@ -269,7 +254,7 @@ CuadrilaterosGameWindow >> rollDiceForNextTurn [
 	self updateGhostSize	"ajusta el tamaño de la figura fantasma"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #drawing }
 CuadrilaterosGameWindow >> showPowerUpOverlayFor: aPlayer [ 
     "Muestra un overlay grande y blanco con los PowerUps recién adquiridos, y pausa la ejecución."
     | acquiredPUs msgText playerColor overlayMorph textMorph targetRect |
@@ -357,8 +342,8 @@ CuadrilaterosGameWindow >> takeKeyboardFocus [
     self activeHand newKeyboardFocus: self.
 ]
 
-{ #category : #'as yet unclassified' }
-CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [ 
+{ #category : #utilities }
+CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [
     "Retorna una descripción en texto para un PowerUp activo."
     
     (aPowerUp isKindOf: PowerUpBlockTurn) ifTrue: [ ^ 'Turno Bloqueado (enemigo)' ].
@@ -369,7 +354,6 @@ CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [
     (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'Bloque Aleatorio Extra' ].
     (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'Vida Extra' ].
     ^ 'Potenciador Desconocido'
-
 ]
 
 { #category : #'game logic' }

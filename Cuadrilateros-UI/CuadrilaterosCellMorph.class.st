@@ -35,8 +35,12 @@ CuadrilaterosCellMorph >> iconForPowerUp: aPowerUp [
     (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '<3' ].
     (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ '>3' ].
     (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'RB' ].
-	 (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ '❤' ].
+	 (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'V' ].
     ^ '?'
+"* 
+↕ ↖ ↗ ↘ ↙ ▶ ↓ ↔ ← → ↑ ⇐ ⇑ ⇒ ⇓ ◄ ►  ◀ ▲ ▼ 
+∞ ∫ ≤ ≠ ‰ π ± √ ∑ ×"
+
 ]
 
 { #category : #accesing }
