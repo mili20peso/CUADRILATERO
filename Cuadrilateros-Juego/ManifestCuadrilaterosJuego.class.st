@@ -18,6 +18,11 @@ ManifestCuadrilaterosJuego class >> ruleRBCascadedNextPutAllsRuleV1FalsePositive
 ]
 
 { #category : #'code-critics' }
+ManifestCuadrilaterosJuego class >> ruleRBConsistencyCheckRuleV1FalsePositive [
+	^ #(#(#(#RGMethodDefinition #(#CuadrilaterosGAME #initializeWithPlayerClasses:boardSize: #false)) #'2025-11-28T19:36:21.446045-03:00') )
+]
+
+{ #category : #'code-critics' }
 ManifestCuadrilaterosJuego class >> ruleRBInconsistentMethodClassificationRuleV1FalsePositive [
 	^ #(#(#(#RGMethodDefinition #(#CuadrilaterosPlayerFragil #addArea: #false)) #'2025-11-27T15:22:43.616443-03:00') )
 ]

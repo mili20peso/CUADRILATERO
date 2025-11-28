@@ -46,14 +46,6 @@ CuadrilaterosPlayer >> areaCovered [
     ^ areaCovered
 ]
 
-{ #category : #accessing }
-CuadrilaterosPlayer >> clearTurnEffects [
-    "Borra todos los efectos acumulados. 
-     Se debe llamar al FINAL del turno para que los efectos como 
-     +1 dado o Sobrescribir no se queden para siempre."
-    activeEffects removeAll.
-]
-
 { #category : #'game logic' }
 CuadrilaterosPlayer >> diceConfiguration [
     "Generates the dictionary with the exact keys expected by the dice.

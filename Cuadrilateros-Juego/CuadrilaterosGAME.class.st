@@ -16,7 +16,7 @@ Class {
 
 { #category : #'control flow instructions' }
 CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [ 
-    "Intenta colocar la figura. Retorna true si tuvo éxito, false si falló."
+    "Intenta colocar la figura. Retorna booleano si pudo o no"
     | player success acquiredPowerUps | 
     player := self currentPlayer.
     
@@ -32,14 +32,11 @@ CuadrilaterosGAME >> attemptPlaceShape: aPointDimensions at: originPoint [
               height: aPointDimensions y 
               player: player. 
 
-        "Activamos PowerUps adquiridos, añadiéndolos a activeEffects (si son de turno) o aplicando su efecto instantáneo"
+        "Activamos PowerUps adquiridos, añadiéndolos a activeEffects (si son de dado) o aplicando su efecto instantáneo"
         acquiredPowerUps do: [ :powerUp |
             powerUp activateOn: player game: self. 
-        ].
+        ].].
         
-    ] ifFalse: [
-        "..."
-    ].
 
     ^ success
 ]
@@ -51,20 +48,19 @@ CuadrilaterosGAME >> board [
 
 { #category : #accesing }
 CuadrilaterosGAME >> currentPlayer [
-    "Devuelve el objeto Jugador al que le toca jugar ahora"
+    "Devuelve el Jugador al que le toca ahora"
     ^ players at: currentPlayerIndex.
 ]
 
 { #category : #accesing }
 CuadrilaterosGAME >> getWinner [
-    "La conversion a asArray antes de enviar #first resuelve el problema de 'message not understood'."
-    
+    "Realiza un ordenamiento para poner como primer elemento el jugador con mas puntos."
     ^ (players asSortedCollection: [ :a :b |
-        "Retorna TRUE si 'a' (el primer elemento) debe ser considerado mejor que 'b' (orden descendente)"
         (a areaCovered > b areaCovered) or: [
             (a areaCovered = b areaCovered) and: [ a figuresPlaced > b figuresPlaced ]
-        ]
-    ]) asArray first
+        ] "Si tienen los mismos puntos ordena segun figuras colocadas como desempate."
+    ]) asArray first. "asArray para que entienda first"
+
 ]
 
 { #category : #initialization }
@@ -77,11 +73,14 @@ CuadrilaterosGAME >> initializeWithPlayerClasses: playerClasses boardSize: size 
 	isGameOver := false.
 	currentPlayerIndex := 1.
 	players := OrderedCollection new.
+	
 	playerClasses
 		withIndexDo: [ :playerClass :i | 
 			p := playerClass new.
 			p id: i.
 			players add: p ].
+		
+		"Empieza a colocar a cada jugador en una esquina segun la cantidad que exista."
 	players size >= 1
 		ifTrue: [ board
 				placeShape: 1 @ 1
@@ -102,7 +101,7 @@ CuadrilaterosGAME >> initializeWithPlayerClasses: playerClasses boardSize: size 
 				width: 1
 				height: 1
 				player: (players at: 3) ].
-	players size >= 4
+	players size = 4
 		ifFalse: [ ^ self ].
 	startPos := 1 @ size.
 	board
@@ -122,34 +121,29 @@ CuadrilaterosGAME >> nextTurn [
     "Avanza al siguiente jugador, saltando a los muertos y a los BLOQUEADOS"
     | nextPlayer |
     
-    "1. Verificar si el juego terminó (chequeo rápido)"
+    "1.Verificar si el juego terminó"
     (players select: [:p | p isAlive]) isEmpty ifTrue: [ 
         isGameOver := true. 
         ^ self 
     ].
-    
-    "2. Limpiar efectos del jugador que acaba de terminar (el actual)"
-    self currentPlayer clearTurnEffects.
-    
-    "3. Avanzar el índice matemáticamente"
+
+    "2. Avanzar el índice"
     currentPlayerIndex := (currentPlayerIndex \\ players size) + 1.
     nextPlayer := self currentPlayer.
-    
-    "--- LÓGICA DE SALTO ---"
-    
-    "4. CASO A: El jugador está MUERTO"
+
+    "3. CASO A: El jugador está MUERTO"
     nextPlayer isAlive ifFalse: [ 
-        ^ self nextTurn "Recursividad: Saltamos al siguiente inmediatamente"
+        ^ self nextTurn "Saltamos al siguiente"
     ].
 
-    "5. CASO C: Jugador válido. Comienza su turno."
-    "Generar probabilidad de PowerUp en el mapa (ej: 20%)"
+    "3. CASO B: Jugador válido. Comienza su turno."
     
     nextPlayer recordTurn.
     
     (3 atRandom) = 1 ifTrue: [ board spawnRandomPowerUp ].
+	"Generar PowerUp en el mapa (33%)"
 
-    "7. Iniciar turno del nuevo jugador"
+    "4. Iniciar turno del nuevo jugador"
     nextPlayer recordTurn.
 ]
 
@@ -166,12 +160,14 @@ CuadrilaterosGAME >> players [
 ]
 
 { #category : #'control flow instructions' }
-CuadrilaterosGAME >> rollDiceForCurrentPlayer [ 
-    | player |
+CuadrilaterosGAME >> rollDiceForCurrentPlayer [
+    | player result |
     player := self currentPlayer.
     
-    "* LIMPIAMOS los efectos persistentes del turno anterior *"
-    player clearTurnEffects. 
+    "Ejecuta la tirada, si tiene powerups los usa."
+    result := player rollDiceWith: dice. 
     
-    ^ player rollDiceWith: dice
+    "Limpieza de powerups."
+    player activeEffects removeAll.	
+    ^ result
 ]

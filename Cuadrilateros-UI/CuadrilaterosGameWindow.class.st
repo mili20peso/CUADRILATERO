@@ -13,7 +13,6 @@ Class {
 		'currentDiceRoll',
 		'cellSize',
 		'ghostMorph',
-		'powerUpLabel',
 		'playerStatsMorph'
 	],
 	#category : #'Cuadrilateros-UI'
@@ -84,30 +83,6 @@ CuadrilaterosGameWindow >> buildUI [
     mainContainer addMorph: infoPanel.
     
     self createGridCells.
-]
-
-{ #category : #events }
-CuadrilaterosGameWindow >> cellClicked: anEvent [ "CREO QUE ESTE METODO HAY QUE BORRARLO"
-    "Cuando el usuario hace click en una celda, intenta poner la figura"
-    | cell clickedPoint success |
-    
-    game isGameOver ifTrue: [ ^ self ].
-    
-    cell := anEvent receiver.
-    clickedPoint := cell col @ cell row. "Ojo: Pharo usa x@y, que es col@row"
-    
-    "Intentamos colocar la figura con las dimensiones de los dados actuales"
-    success := game attemptPlaceShape: currentDiceRoll at: clickedPoint.
-    
-    success ifTrue: [
-        messageLabel contents: '¡Jugada exitosa! Turno siguiente.'.
-        game nextTurn.
-        self rollDiceForNextTurn.
-        self updateDisplay.
-        self checkVictory.
-    ] ifFalse: [
-        messageLabel contents: 'Movimiento INVÁLIDO. Revisa adyacencia o espacio.'.
-    ].
 ]
 
 { #category : #events }
@@ -218,11 +193,6 @@ CuadrilaterosGameWindow >> createGridCells [
     self updateGhostSize.
 ]
 
-{ #category : #events }
-CuadrilaterosGameWindow >> handlesKeyboard [
-    ^ true
-]
-
 { #category : #accessing }
 CuadrilaterosGameWindow >> infoPanel [ 
     "Devuelve el panel de información (Morph) para su manipulación."
@@ -244,20 +214,6 @@ CuadrilaterosGameWindow >> initializeWithGame: aGame [
     
     self buildUI.
     self updateDisplay.
-]
-
-{ #category : #events }
-CuadrilaterosGameWindow >> keyStroke: anEvent [
-	game isGameOver
-		ifTrue: [ ^ self ].
-	anEvent keyCharacter = Character space
-		ifFalse: [ ^ self ].
-	game currentPlayer loseLife.
-	messageLabel contents: '¡TE RENDISTE! Pierdes 1 vida y pasas turno.'.
-	game nextTurn.
-	self rollDiceForNextTurn.
-	self updateDisplay.
-	self checkVictory
 ]
 
 { #category : #'game logic' }
@@ -350,19 +306,13 @@ CuadrilaterosGameWindow >> stepTime [
     ^ 20
 ]
 
-{ #category : #events }
-CuadrilaterosGameWindow >> takeKeyboardFocus [
-    "Obliga a Pharo a enviar las teclas a esta ventana"
-    self activeHand newKeyboardFocus: self.
-]
-
 { #category : #utilities }
 CuadrilaterosGameWindow >> textForPowerUp: aPowerUp [ 
     "Retorna una descripción en texto para un PowerUp activo."
     (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ '¡Más 1 en siguiente tirada! :) ' ].
     (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ '¡Menos 1 en siguiente tirada! :O' ].
-    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '¡Próxima tirada obtendrá highroll!>' ].
-    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Próxima tirada obtendrá lowroll!' ].
+    (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '¡Próxima tirada obtendrá lowroll!' ].
+    (aPowerUp isKindOf: PowerUpHighRoll) ifTrue: [ ^ 'Próxima tirada obtendrá high!' ].
     (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ '¡Bloque Aleatorio Extra!' ].
     (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ '¡+1 Vida!' ].
     ^ 'Potenciador Desconocido'
