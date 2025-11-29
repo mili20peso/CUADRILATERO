@@ -1,5 +1,7 @@
 "
-Esta clase representa un cuadradito en la pantalla. Sabe de qué color pintarse y qué ícono de PowerUp mostrar.
+Representa visualmente una única celda dentro del tablero de juego.
+Se encarga de dibujar el color del jugador que la ocupa o el ícono
+del potenciador que contiene. Es la clase que contiene las coordenadas del click que se va a recibir
 "
 Class {
 	#name : #CuadrilaterosCellMorph,
@@ -13,7 +15,7 @@ Class {
 
 { #category : #utilities }
 CuadrilaterosCellMorph class >> colorForPlayerId: anId [
-    "Método de CLASE para mapear un ID de jugador a un Color."
+    "Método de clase. Mapea un ID de jugador a un Color."
     anId = 1 ifTrue: [ ^ Color red ].
     anId = 2 ifTrue: [ ^ Color blue ].
     anId = 3 ifTrue: [ ^ Color green ].
@@ -28,7 +30,7 @@ CuadrilaterosCellMorph >> col [
 
 { #category : #drawing }
 CuadrilaterosCellMorph >> iconForPowerUp: aPowerUp [
-    "Retorna un string/emoji segun la clase"
+    "Retorna un identificador grafico a cada powerup, de modo que se vean en el tablero"
     (aPowerUp isKindOf: PowerUpPlusOne) ifTrue: [ ^ '+1' ].
     (aPowerUp isKindOf: PowerUpMinusOne) ifTrue: [ ^ '-1' ].
     (aPowerUp isKindOf: PowerUpLowRoll) ifTrue: [ ^ '<3' ].
@@ -36,10 +38,6 @@ CuadrilaterosCellMorph >> iconForPowerUp: aPowerUp [
     (aPowerUp isKindOf: PowerUpRandomBlock) ifTrue: [ ^ 'RB' ].
 	 (aPowerUp isKindOf: PowerUpExtraLife) ifTrue: [ ^ 'V' ].
     ^ '?'
-"* 
-↕ ↖ ↗ ↘ ↙ ▶ ↓ ↔ ← → ↑ ⇐ ⇑ ⇒ ⇓ ◄ ►  ◀ ▲ ▼ 
-∞ ∫ ≤ ≠ ‰ π ± √ ∑ ×"
-
 ]
 
 { #category : #accesing }
@@ -57,23 +55,21 @@ CuadrilaterosCellMorph >> row: r col: c [
 CuadrilaterosCellMorph >> updateStateFrom: aValue [
     "Actualiza la visualización de la celda según el contenido del tablero"
     
-    "--- CORRECCIÓN ---"
     self removeAllMorphs.
-    "------------------"
 
-    "1. Caso Vacío"
+    "Celda Vacía"
     aValue isNil ifTrue: [ 
         self color: Color white.
         ^ self 
     ].
 
-    "2. Caso Jugador (Número)"
+    "Caso Jugador (Número)"
     aValue isNumber ifTrue: [ 
-        self color: (self class colorForPlayerId: aValue). "Llamada al método de CLASE"
+        self color: (self class colorForPlayerId: aValue). "Llamada al método de CLASE, asigna un color a cada id de jugador"
         ^ self 
     ].
 
-    "3. Caso PowerUp"
+    "Caso potenciador"
     (aValue isKindOf: CuadrilaterosPowerUp) ifFalse: [ ^ self ].
     "Dibujar PowerUp"
     self color: Color lightGray.
@@ -81,7 +77,7 @@ CuadrilaterosCellMorph >> updateStateFrom: aValue [
                 contents: (self iconForPowerUp: aValue);
                 color: Color black;
                 yourself).
-    "Centrar el ícono recién agregado"
+    "Centra el ícono recién agregado"
     self submorphs notEmpty ifTrue: [ 
         self submorphs first center: self center]
 ]

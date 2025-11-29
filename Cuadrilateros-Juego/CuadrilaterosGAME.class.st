@@ -138,20 +138,8 @@ CuadrilaterosGAME >> nextTurn [
 
     "3. CASO B: Jugador válido. Comienza su turno."
     
-    nextPlayer recordTurn.
-    
     (3 atRandom) = 1 ifTrue: [ board spawnRandomPowerUp ].
 	"Generar PowerUp en el mapa (33%)"
-
-    "4. Iniciar turno del nuevo jugador"
-    nextPlayer recordTurn.
-]
-
-{ #category : #control }
-CuadrilaterosGAME >> playerCannotMove [
-    "El jugador pierde una vida y se pasa el turno"
-    self currentPlayer loseLife.
-    self nextTurn.
 ]
 
 { #category : #accesing }
