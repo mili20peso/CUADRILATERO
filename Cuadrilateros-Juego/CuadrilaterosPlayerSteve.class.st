@@ -1,3 +1,9 @@
+"
+Subclase de jugador
+--STEVE--
+*Tiene la misma vida
+*Solo pone figuras cuadradas (base = altura)
+"
 Class {
 	#name : #CuadrilaterosPlayerSteve,
 	#superclass : #CuadrilaterosPlayer,
@@ -6,13 +12,12 @@ Class {
 
 { #category : #'game logic' }
 CuadrilaterosPlayerSteve >> rollDiceWith: aDice [
-    "Sobreescribe para forzar que X=Y, usando solo el primer resultado de la tirada con modificadores."
+    "Sobreescribe el metodo para forzar que X=Y, solo tiramos el dado una vez."
     | val |
     
-    "Tiramos el dado una sola vez, aplicando los modificadores de efectos.
-     Se usa 'generator:' para obtener un único valor con todos los efectos aplicados."
+    "Tiramos el dado aplicando los modificadores de efectos."
     val := aDice generator: self diceConfiguration.
     
-    "El resultado es un Point (X@Y) donde X y Y son iguales"
+    "El resultado es un Point (X@Y) donde X e Y son iguales"
     ^ val @ val
 ]

@@ -1,3 +1,6 @@
+"
+Fuerza a que la proxima tirada no de numeros mayores a 3
+"
 Class {
 	#name : #PowerUpLowRoll,
 	#superclass : #CuadrilaterosPowerUp,
@@ -12,6 +15,6 @@ PowerUpLowRoll >> activateOn: aPlayer game: aGame [
 
 { #category : #configuration }
 PowerUpLowRoll >> applyDiceModifierTo: aDictionary [
-    "Adds the '<3' key for reroll logic if result >= 3."
+    "Guarda la regla '<3' en el diccionario para luego ser activada por el dado."
     aDictionary at: '<3' put: true.
 ]

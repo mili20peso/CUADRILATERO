@@ -1,3 +1,6 @@
+"
+Clase contenedora del juego, controla el flujo del mismo y contiene las clases principales (1 a 4 jugadores, tablero)
+"
 Class {
 	#name : #CuadrilaterosGAME,
 	#superclass : #Object,

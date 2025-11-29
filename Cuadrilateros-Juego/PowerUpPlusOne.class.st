@@ -1,3 +1,6 @@
+"
+Suma +1 al numero recibido por los dados en la proxima tirada
+"
 Class {
 	#name : #PowerUpPlusOne,
 	#superclass : #CuadrilaterosPowerUp,
@@ -12,6 +15,6 @@ PowerUpPlusOne >> activateOn: aPlayer game: aGame [
 
 { #category : #configuration }
 PowerUpPlusOne >> applyDiceModifierTo: aDictionary [
-    "Adds the '+1' key to the modifiers dictionary."
+    "AGuarda la regla '+1' en el diccionario para luego ser activada por el dado."
     aDictionary at: '+1' put: true.
 ]

@@ -1,3 +1,6 @@
+"
+Agrega una vida al jugador que lo obtenga
+"
 Class {
 	#name : #PowerUpExtraLife,
 	#superclass : #CuadrilaterosPowerUp,

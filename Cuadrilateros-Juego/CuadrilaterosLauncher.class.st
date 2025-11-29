@@ -1,3 +1,6 @@
+"
+Esta clase esta hecha para poder facilitar el arranque del juego y no depender de un script lanzador
+"
 Class {
 	#name : #CuadrilaterosLauncher,
 	#superclass : #Object,
@@ -6,7 +9,7 @@ Class {
 
 { #category : #initialization }
 CuadrilaterosLauncher class >> playerRoles [
-	"Mapeo de la clase de jugador a su descripción corta."
+	"Mapeo de la clase de jugador a su descripción."
     ^ Dictionary new
         at: CuadrilaterosPlayer put: 'Base: Balanceado';
         at: CuadrilaterosPlayerTanque put: 'Tanque: Mucha vida / - Puntuación';
@@ -18,7 +21,7 @@ CuadrilaterosLauncher class >> playerRoles [
 
 { #category : #initialization }
 CuadrilaterosLauncher class >> roleChoices [
-	"Genera la lista de Strings que se mostrará en el diálogo (NombreClase: Descripción)"
+	"Genera la lista de formato (NombreClase: Descripción)"
     | dict |
     dict := self playerRoles.
     ^ dict keys collect: [ :class | 
@@ -35,7 +38,7 @@ CuadrilaterosLauncher class >> roleValues [
 
 { #category : #initialization }
 CuadrilaterosLauncher class >> start [
-    "Ejecuta el script completo para inicializar y abrir la ventana del juego."
+    "Ejecuta toda la inicializacion del juego."
     | playerCount size playerClasses game window roles |
     
     "1. Elegir cantidad de jugadores"
@@ -60,8 +63,7 @@ CuadrilaterosLauncher class >> start [
     
     1 to: playerCount do: [ :i |
         | selectedRoleClass titleString |
-        
-        "CORRECCIÓN: Uso de Streams para construir el título (evita warning de concatenación)"
+
         titleString := String streamContents: [ :stream |
             stream nextPutAll: 'Jugador '.
             stream nextPutAll: i asString.
@@ -78,7 +80,7 @@ CuadrilaterosLauncher class >> start [
         playerClasses add: selectedRoleClass.
     ].
 
-    "4. Inicializar Lógica con las clases elegidas"
+    "4. Inicializar Lógica con las elecciones"
     game := CuadrilaterosGAME new.
     game initializeWithPlayerClasses: playerClasses boardSize: size.
 

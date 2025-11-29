@@ -1,3 +1,6 @@
+"
+Clase de jugador, contiene la informacion propia de cada usuario del juego, maneja logicas propias de su clase y ademas su ID se utiliza como indice para realizar otros metodos en clases distintas
+"
 Class {
 	#name : #CuadrilaterosPlayer,
 	#superclass : #Object,
@@ -5,7 +8,6 @@ Class {
 		'id',
 		'lives',
 		'areaCovered',
-		'turnsPlayed',
 		'figuresPlaced',
 		'activeEffects'
 	],
@@ -14,44 +16,43 @@ Class {
 
 { #category : #accessing }
 CuadrilaterosPlayer >> activeEffects [
-    "Devuelve la colección de efectos activos actualmente"
+    "Devuelve la colección de efectos activos"
     ^ activeEffects
 ]
 
 { #category : #accessing }
 CuadrilaterosPlayer >> addArea: anInteger [
-    "Suma una cantidad de unidades cuadradas al total del jugador.
-     anInteger: es el resultado de base * altura de la figura colocada."
+    "Recibe el area de la figura colocada (base * altura) y le suma esa cantidad al total del jugador."
     areaCovered := areaCovered + anInteger.
 ]
 
 { #category : #adding }
 CuadrilaterosPlayer >> addLife [
 lives:= lives + 1
+"Metodo utilizado para el potenciador vida extra"
 ]
 
 { #category : #accessing }
 CuadrilaterosPlayer >> addPowerUp: aPowerUp [
-    "Agrega un potenciador a la lista de efectos activos.
-     aPowerUp: es una instancia de una subclase de PowerUp."
+    "Agrega un potenciador a la lista de efectos activos. Recibe una instancia subclase de PowerUp."
     activeEffects add: aPowerUp.
 ]
 
 { #category : #accessing }
 CuadrilaterosPlayer >> areaCovered [
-    "Devuelve el área total cubierta por el jugador"
+    "Devuelve el área total cubierta por el jugador (puntaje)"
     ^ areaCovered
 ]
 
 { #category : #'game logic' }
 CuadrilaterosPlayer >> diceConfiguration [
-    "Generates the dictionary with the exact keys expected by the dice.
-     Uses Polymorphism, delegating the responsibility to each PowerUp."
+    "Genera el diccionario con las reglas esperadas por la clase dado.
+     Utiliza polimorfismo, delegando la responsabilidad a cada potenciador."
     | config |
     config := Dictionary new.
     
     activeEffects do: [ :effect |
-        "Sends the polymorphic message to the PowerUp. Only dice PowerUps will modify 'config'."
+        "Envia el mensaje a los potenciadores, solo los potenciadores que afectan a los dados podran modificar el diccionario."
         effect applyDiceModifierTo: config.
     ].
     ^ config
@@ -59,25 +60,26 @@ CuadrilaterosPlayer >> diceConfiguration [
 
 { #category : #'game logic' }
 CuadrilaterosPlayer >> figuresPlaced [
-    "Devuelve la cantidad de figuras colocadas."
+    "Devuelve la cantidad de figuras colocadas (Sirve para el desempate)."
     ^ figuresPlaced
 ]
 
 { #category : #accessing }
 CuadrilaterosPlayer >> hasPowerUp: aPowerUpClass [
-    "Recorre la lista y busca si alguno es del tipo (Clase) que pedimos"
+    "Recorre la lista y busca si alguno es del tipo que pedimos. 
+		Utiliza isKindOf para buscar la clase particular"
     ^ activeEffects anySatisfy: [ :effect | effect isKindOf: aPowerUpClass ]
 ]
 
 { #category : #accessing }
 CuadrilaterosPlayer >> id [
-    "Devuelve el identificador del jugador (ej: 'Jugador 1' o #Blue)"
+    "Devuelve el identificador del jugador (1 a 4)"
     ^ id
 ]
 
 { #category : #accessing }
 CuadrilaterosPlayer >> id: anObject [
-    "Establece el identificador del jugador"
+    "Establece el id del jugador"
     id := anObject
 ]
 
@@ -87,9 +89,8 @@ CuadrilaterosPlayer >> initialize [
     super initialize.
     lives := 3.              "Comienzan con 3 vidas"
     areaCovered := 0.        "0 superficie cubierta al inicio"
-    turnsPlayed := 0.        "0 turnos jugados"
     activeEffects := OrderedCollection new. "Lista vacía para guardar potenciadores"
-	figuresPlaced := 0.
+	 figuresPlaced := 0. "Ninguna figura colocada"
 
 ]
 
@@ -107,7 +108,7 @@ CuadrilaterosPlayer >> lives [
 
 { #category : #accessing }
 CuadrilaterosPlayer >> loseLife [
-    "Resta una vida al jugador. Se invoca cuando no puede colocar figura."
+    "Resta una vida al jugador. Se invoca cuando el jugador decide saltar turno."
     lives := lives - 1.
 ]
 
@@ -117,22 +118,8 @@ CuadrilaterosPlayer >> recordFigurePlaced [
     figuresPlaced := figuresPlaced + 1.
 ]
 
-{ #category : #accessing }
-CuadrilaterosPlayer >> recordTurn [
-    "Incrementa el contador de turnos jugados. 
-     Se debe llamar al inicio de cada turno de este jugador."
-    turnsPlayed := turnsPlayed + 1.
-]
-
 { #category : #'game logic' }
 CuadrilaterosPlayer >> rollDiceWith: aDice [ 
-    "Usa el dado para generar la tirada con la configuración de efectos actual.
-     Este método se sobrescribe en subclases con lógica especial (ej: Suertudo, Steve)."
+    "Usa el dado para generar la tirada con la configuración de efectos actuales."
     ^ aDice roll: self diceConfiguration
-]
-
-{ #category : #accessing }
-CuadrilaterosPlayer >> turnsPlayed [
-    "Devuelve la cantidad de turnos que el jugador ha sobrevivido"
-    ^ turnsPlayed
 ]

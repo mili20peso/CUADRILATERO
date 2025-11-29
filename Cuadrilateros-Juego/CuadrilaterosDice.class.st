@@ -1,3 +1,6 @@
+"
+Clase dado, se encarga de generar las dimensiones de la figura a colocar, ademas es afectada por los potenciadores de dado, que pueden adulterar los resultados de los valores que devuelve
+"
 Class {
 	#name : #CuadrilaterosDice,
 	#superclass : #Object,
@@ -10,11 +13,11 @@ Class {
 { #category : #random }
 CuadrilaterosDice >> generator: modifiers [
 	|result|
-	result := random nextInt: 6.
+	result := random nextInt: 6. "Genera la tirada del dado y consulta si existen modificadores"
 	 (modifiers isNil or: [ modifiers isEmpty ]) 
         ifTrue: [ ^ result ] 
         ifFalse: [ ^ self rollMod: modifiers num:result ]. 
-	"interrumpe si no hay modifiers"
+
 ]
 
 { #category : #initialization }
@@ -26,48 +29,45 @@ CuadrilaterosDice >> initialize [
 
 { #category : #random }
 CuadrilaterosDice >> roll: modifiers [
-    "Calcula x e y, y devuelve un Punto (Point) listo para usar en el Tablero"
+    "realiza las tiradas de x e y. Devuelve un dato de estructura de dos elementos ordenados"
     | valX valY |
     
     valX := self generator: modifiers.
     valY := self generator: modifiers.
     
-    ^ valX @ valY  "Esto devuelve un objeto Point (ej: 3@5)"
+    ^ valX @ valY  "Esto devuelve un objeto Point"
 ]
 
 { #category : #random }
 CuadrilaterosDice >> rollMod: modifiers num: tirada [
 	
-    "Genera una tirada aplicando las reglas del diccionario de configuración.
-     Claves esperadas: '+1', '-1', '<3', '>3'"
+    "Genera una tirada aplicando las reglas del diccionario de configuración."
     
     | result |
 
     result:= tirada.
 
     
-    "Si tiene <3 (Debe ser menor a 3). Mientras sea >= 3, tira de nuevo."
+    "Si tiene <3 (tirada menor a 3). Mientras sea >= 3, tira de nuevo."
     (modifiers includesKey: '<3') ifTrue: [ 
         [ result >= 3 ] whileTrue: [ result := random nextInt: 6 ]
     ].
 
-    "Si tiene >3 (Debe ser mayor a 3). Mientras sea <= 3, tira de nuevo."
+    "Si tiene >3 (tirada mayor a 3). Mientras sea <= 3, tira de nuevo."
     (modifiers includesKey: '>3') ifTrue: [ 
         [ result <= 3 ] whileTrue: [ result := random nextInt: 6 ] 
     ].
-    
-    "MODIFICADORES +-1"
     
     "Caso: +1"
     (modifiers includesKey: '+1') ifTrue: [ 
         result := result + 1 
     ].
 
-    "Caso: -1 (Con restricción de mínimo 1)"
+    "Caso: -1"
     (modifiers includesKey: '-1') ifTrue: [ 
         result := result - 1.
     ].
 
-    "Aseguramos que el resultado nunca sea menor a 1 tras la resta"
+    "Restriccion para no tener el valor 0"
     ^ result max: 1
 ]
