@@ -8,8 +8,8 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-PotenciadorBloqueAleatorio >> activarEn: unJugador juego: unJuego [ [
+PotenciadorBloqueAleatorio >> activarEn: unJugador juego: unJuego [ 
     unJuego tablero posicionarBloqueoAleatorioParaJugador: unJugador. 
     unJugador agregarPotenciador: self.
-]
+
 ]

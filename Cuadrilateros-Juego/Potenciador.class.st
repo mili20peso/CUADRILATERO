@@ -8,12 +8,12 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-Potenciador class >> subclaseAleatoria [ [
+Potenciador class >> subclaseAleatoria [ 
     "Devuelve una de las subclases (los tipos de powerups) al azar"
     
     "devuelve una colección con todas las subclases y selecciona una"
     ^ self subclasses atRandom
-]
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -24,8 +24,8 @@ Potenciador >> activarEn: unJugador juego: unJuego [ [
 ]
 
 { #category : #'as yet unclassified' }
-Potenciador >> aplicarModificadorDadoA: unDiccionario [ [
+Potenciador >> aplicarModificadorDadoA: unDiccionario [ 
     "Metodo por defecto, solo va a sobreescribirse en los potenciadores que afecten a los dados"
     ^ unDiccionario
-]
+
 ]

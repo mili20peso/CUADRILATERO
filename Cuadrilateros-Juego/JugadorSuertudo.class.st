@@ -8,11 +8,11 @@ Class {
 }
 
 { #category : #initialization }
-JugadorSuertudo >> initialize [ [
+JugadorSuertudo >> initialize [ 
     super initialize.
     "Inicia con 2 vidas"
     vidas := 2.
-]
+
 ]
 
 { #category : #'as yet unclassified' }
