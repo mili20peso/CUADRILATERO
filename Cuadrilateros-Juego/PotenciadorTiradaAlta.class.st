@@ -1,20 +1,23 @@
 "
-Powerup Tiradaalta
+Representa al Potenciadortiradaalta 
 "
 Class {
-	#name : #PowerUpTiradaAlta,
-	#superclass : #PotenciadorCuadrilateros,
+	#name : #PotenciadorTiradaAlta,
+	#superclass : #Potenciador,
 	#category : #'Cuadrilateros-Juego'
 }
 
 { #category : #'as yet unclassified' }
-PowerUpTiradaAlta >> activarEn: unJugador juego: unJuego [
+PotenciadorTiradaAlta >> activarEn: unJugador juego: unJuego [ 
     "Agrega la instancia del Potenciador a los efectos activos del jugador."
     unJugador agregarPotenciador: self.
+
+
 ]
 
 { #category : #'as yet unclassified' }
-PowerUpTiradaAlta >> aplicarModificadorDadoA: unDiccionario [
+PotenciadorTiradaAlta >> aplicarModificadorDadoA: unDiccionario [ 
     "Guarda la regla '>3' en el diccionario para luego ser activada por el dado."
     unDiccionario at: '>3' put: true.
+
 ]

@@ -1,8 +1,8 @@
 "
-dadocuadrilatero
+Representa Dado
 "
 Class {
-	#name : #DadoCuadrilateros,
+	#name : #Dado,
 	#superclass : #Object,
 	#instVars : [
 		'aleatorio'
@@ -11,16 +11,39 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-DadoCuadrilateros >> aplicarModificadores: modificadores numeroBase: tiradaBase [
+Dado >> generador: modificadores [ 
+	|resultado|
+	resultado := aleatorio nextInt: 6. "Genera la tirada del dado y consulta si existen modificadores"
+	 (modificadores isNil or: [ modificadores isEmpty ]) 
+        ifTrue: [ ^ resultado ] 
+        ifFalse: [ ^ self tiradaConModificador: modificadores numero: resultado ]. 
+
+
+]
+
+{ #category : #initialization }
+Dado >> initialize [ 
+    super initialize.
+    "Creamos una única instancia de Random para no generar seeds todo el tiempo"
+    aleatorio := Random new.
+
+]
+
+{ #category : #'as yet unclassified' }
+Dado >> tiradaConModificador: modificadores numero: tirada [ 
+	
     "Genera una tirada aplicando las reglas del diccionario de configuración."
     
     | resultado |
-    resultado := tiradaBase.
+
+    resultado:= tirada.
+
     
     "Si tiene <3 (tirada menor a 3). Mientras sea >= 3, tira de nuevo."
     (modificadores includesKey: '<3') ifTrue: [ 
         [ resultado >= 3 ] whileTrue: [ resultado := aleatorio nextInt: 6 ]
     ].
+
     "Si tiene >3 (tirada mayor a 3). Mientras sea <= 3, tira de nuevo."
     (modificadores includesKey: '>3') ifTrue: [ 
         [ resultado <= 3 ] whileTrue: [ resultado := aleatorio nextInt: 6 ] 
@@ -30,37 +53,25 @@ DadoCuadrilateros >> aplicarModificadores: modificadores numeroBase: tiradaBase 
     (modificadores includesKey: '+1') ifTrue: [ 
         resultado := resultado + 1 
     ].
+
     "Caso: -1"
     (modificadores includesKey: '-1') ifTrue: [ 
         resultado := resultado - 1.
     ].
+
     "Restriccion para no tener el valor 0"
     ^ resultado max: 1
+
 ]
 
 { #category : #'as yet unclassified' }
-DadoCuadrilateros >> generarValor: modificadores [
-    | resultado |
-    resultado := aleatorio nextInt: 6. "Genera la tirada del dado y consulta si existen modificadores"
-    (modificadores isNil or: [ modificadores isEmpty ]) 
-        ifTrue: [ ^ resultado ] 
-        ifFalse: [ ^ self aplicarModificadores: modificadores numeroBase: resultado ].
-]
-
-{ #category : #'as yet unclassified' }
-DadoCuadrilateros >> iniciar [
-    super initialize.
-    "Creamos una única instancia de Random para no generar seeds todo el tiempo"
-    aleatorio := Random new.
-]
-
-{ #category : #'as yet unclassified' }
-DadoCuadrilateros >> tirar: modificadores [
+Dado >> tirar: modificadores [ 
     "realiza las tiradas de x e y. Devuelve un dato de estructura de dos elementos ordenados"
-    | valX valY |
+    | valorX valorY |
     
-    valX := self generarValor: modificadores.
-    valY := self generarValor: modificadores.
+    valorX := self generador: modificadores.
+    valorY := self generador: modificadores.
     
-    ^ valX @ valY  "Esto devuelve un objeto Point"
+    ^ valorX @ valorY  "Esto devuelve un objeto Point"
+
 ]

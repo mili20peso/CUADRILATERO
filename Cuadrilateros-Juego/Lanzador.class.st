@@ -1,88 +1,96 @@
 "
-lanzador cuadrilatero
-
+Representa al Lanzador 
 "
 Class {
-	#name : #LanzadorCuadrilateros,
+	#name : #Lanzador,
 	#superclass : #Object,
 	#category : #'Cuadrilateros-Juego'
 }
 
 { #category : #'as yet unclassified' }
-LanzadorCuadrilateros >> iniciarJuego [
+Lanzador class >> iniciar [ 
     "Ejecuta toda la inicializacion del juego."
-    | cantidadJugadores tamanio clasesJugador juego ventana roles |
+    | cantidadJugadores tamanio clasesJugadores juego ventana roles |
     
     "1. Elegir cantidad de jugadores"
     cantidadJugadores := UIManager default  
         chooseFrom: #('2 Jugadores' '3 Jugadores' '4 Jugadores')  
         values: #(2 3 4)  
         title: 'Seleccione cantidad de jugadores'.
+
     cantidadJugadores ifNil: [ ^ self ]. "Si cancela, sale"
-    
+
     "2. Elegir tamaño del tablero"
     tamanio := UIManager default  
         chooseFrom: #('Pequeño (16x16)' 'Mediano (20x20)' 'Grande (24x24)')  
         values: #(16 20 24)  
         title: 'Seleccione tamaño del tablero'.
+
     tamanio ifNil: [ ^ self ].
     
     "3. Elegir clase/rol para cada jugador"
-    roles := self opcionesRol.
-    clasesJugador := OrderedCollection new.
+    roles := self opcionesRoles.
+    clasesJugadores := OrderedCollection new.
     
     1 to: cantidadJugadores do: [ :i |
-        | claseRolSeleccionada stringTitulo |
-        stringTitulo := String streamContents: [ :stream |
-            stream nextPutAll: 'Jugador '.
-            stream nextPutAll: i asString.
-            stream nextPutAll: ': Seleccione su Clase/Rol'
+        | claseRolSeleccionada cadenaTitulo |
+
+        cadenaTitulo := String streamContents: [ :flujo |
+            flujo nextPutAll: 'Jugador '.
+            flujo nextPutAll: i asString.
+            flujo nextPutAll: ': Seleccione su Clase/Rol'
         ].
         
         "Pregunta al jugador actual por su clase"
         claseRolSeleccionada := UIManager default
             chooseFrom: roles
-            values: self valoresRol
-            title: stringTitulo.
+            values: self valoresRoles
+            title: cadenaTitulo.
             
         claseRolSeleccionada ifNil: [ ^ self ]. "Si cancela, sale"
-        clasesJugador add: claseRolSeleccionada.
+        clasesJugadores add: claseRolSeleccionada.
     ].
-    
+
     "4. Inicializar Lógica con las elecciones"
-    juego := JuegoCuadrilateros new.
-    juego inicializarConClasesJugador: clasesJugador tamanioTablero: tamanio.
-    
+    juego := Juego new.
+    juego inicializarConClasesJugadores: clasesJugadores tamanioTablero: tamanio.
+
     "5. Abrir Ventana"
-    ventana := VentanaJuegoCuadrilateros new.
+    ventana := VentanaJuego new.
     ventana inicializarConJuego: juego.
     ventana openInWorld.
+
 ]
 
 { #category : #'as yet unclassified' }
-LanzadorCuadrilateros >> opcionesRol [
+Lanzador class >> opcionesRoles [ 
 	"Genera la lista de formato (NombreClase: Descripción)"
-    | dict |
-    dict := self rolesJugador.
-    ^ dict keys collect: [ :class | 
-        class name , ': ' , (dict at: class) 
+    | diccionario |
+    diccionario := self rolesJugadores.
+    ^ diccionario keys collect: [ :clase | 
+        clase name , ': ' , (diccionario at: clase) 
     ]
+
+
 ]
 
 { #category : #'as yet unclassified' }
-LanzadorCuadrilateros >> rolesJugador [
+Lanzador class >> rolesJugadores [ 
 	"Mapeo de la clase de jugador a su descripción."
     ^ Dictionary new
-        at: CuadrilaterosPlayer put: 'Base: Balanceado';
-        at: CuadrilaterosPlayerTanque put: 'Tanque: Mucha vida / - Puntuación';
-        at: CuadrilaterosPlayerFragil put: 'Frágil: + Puntuación / 1 Vida';
-        at: CuadrilaterosPlayerSuertudo put: 'Suertudo: Mejores Tiradas / -Vida';
-        at: CuadrilaterosPlayerSteve put: 'STEVE: Solo hace cuadrados';
+        at: Jugador put: 'Base: Balanceado';
+        at: JugadorTanque put: 'Tanque: Mucha vida / - Puntuación';
+        at: JugadorFragil put: 'Frágil: + Puntuación / 1 Vida';
+        at: JugadorSuertudo put: 'Suertudo: Mejores Tiradas / -Vida';
+        at: JugadorSteve put: 'STEVE: Solo hace cuadrados';
         yourself
+
 ]
 
 { #category : #'as yet unclassified' }
-LanzadorCuadrilateros >> valoresRol [
+Lanzador class >> valoresRoles [ 
 	"Genera la lista de Clases reales (los valores) que se devolverán al seleccionar."
-    ^ self rolesJugador keys
+    ^ self rolesJugadores keys
+
+
 ]
