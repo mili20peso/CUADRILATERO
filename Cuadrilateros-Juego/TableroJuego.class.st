@@ -1,5 +1,5 @@
 "
-Representa al Tablerojuego
+Clase tablero, existe una por partida, tiene hasta 3 tamaños distintos y se encarga de la logica de colocado de figuras, ademas de la generacion y colocacion de potenciadores
 "
 Class {
 	#name : #TableroJuego,
@@ -220,3 +220,4 @@ TableroJuego >> verificarAdyacenciaPara: puntoOrigen ancho: ancho alto: alto jug
     ^ false
 
 ]
+
