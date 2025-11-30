@@ -1,5 +1,8 @@
 "
-Representa al JugadorTanque 
+Subclase de jugador
+--TANQUE--
+*Tiene mas vida (5)
+*Acumula un menor puntaje respecto al area cubierta (80%)
 "
 Class {
 	#name : #JugadorTanque,
@@ -22,3 +25,4 @@ JugadorTanque >> initialize [
     vidas := 5.
 
 ]
+
