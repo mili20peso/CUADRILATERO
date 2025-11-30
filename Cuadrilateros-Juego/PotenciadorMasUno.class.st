@@ -1,5 +1,5 @@
 "
-Representa al PotenciadorMasuno 
+Suma +1 al numero recibido por los dados en la proxima tirada
 "
 Class {
 	#name : #PotenciadorMasUno,
@@ -20,3 +20,4 @@ PotenciadorMasUno >> aplicarModificadorDadoA: unDiccionario [
     unDiccionario at: '+1' put: true.
 
 ]
+
