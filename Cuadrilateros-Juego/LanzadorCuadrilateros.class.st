@@ -1,0 +1,88 @@
+"
+lanzador cuadrilatero
+
+"
+Class {
+	#name : #LanzadorCuadrilateros,
+	#superclass : #Object,
+	#category : #'Cuadrilateros-Juego'
+}
+
+{ #category : #'as yet unclassified' }
+LanzadorCuadrilateros >> iniciarJuego [
+    "Ejecuta toda la inicializacion del juego."
+    | cantidadJugadores tamanio clasesJugador juego ventana roles |
+    
+    "1. Elegir cantidad de jugadores"
+    cantidadJugadores := UIManager default  
+        chooseFrom: #('2 Jugadores' '3 Jugadores' '4 Jugadores')  
+        values: #(2 3 4)  
+        title: 'Seleccione cantidad de jugadores'.
+    cantidadJugadores ifNil: [ ^ self ]. "Si cancela, sale"
+    
+    "2. Elegir tamaño del tablero"
+    tamanio := UIManager default  
+        chooseFrom: #('Pequeño (16x16)' 'Mediano (20x20)' 'Grande (24x24)')  
+        values: #(16 20 24)  
+        title: 'Seleccione tamaño del tablero'.
+    tamanio ifNil: [ ^ self ].
+    
+    "3. Elegir clase/rol para cada jugador"
+    roles := self opcionesRol.
+    clasesJugador := OrderedCollection new.
+    
+    1 to: cantidadJugadores do: [ :i |
+        | claseRolSeleccionada stringTitulo |
+        stringTitulo := String streamContents: [ :stream |
+            stream nextPutAll: 'Jugador '.
+            stream nextPutAll: i asString.
+            stream nextPutAll: ': Seleccione su Clase/Rol'
+        ].
+        
+        "Pregunta al jugador actual por su clase"
+        claseRolSeleccionada := UIManager default
+            chooseFrom: roles
+            values: self valoresRol
+            title: stringTitulo.
+            
+        claseRolSeleccionada ifNil: [ ^ self ]. "Si cancela, sale"
+        clasesJugador add: claseRolSeleccionada.
+    ].
+    
+    "4. Inicializar Lógica con las elecciones"
+    juego := JuegoCuadrilateros new.
+    juego inicializarConClasesJugador: clasesJugador tamanioTablero: tamanio.
+    
+    "5. Abrir Ventana"
+    ventana := VentanaJuegoCuadrilateros new.
+    ventana inicializarConJuego: juego.
+    ventana openInWorld.
+]
+
+{ #category : #'as yet unclassified' }
+LanzadorCuadrilateros >> opcionesRol [
+	"Genera la lista de formato (NombreClase: Descripción)"
+    | dict |
+    dict := self rolesJugador.
+    ^ dict keys collect: [ :class | 
+        class name , ': ' , (dict at: class) 
+    ]
+]
+
+{ #category : #'as yet unclassified' }
+LanzadorCuadrilateros >> rolesJugador [
+	"Mapeo de la clase de jugador a su descripción."
+    ^ Dictionary new
+        at: CuadrilaterosPlayer put: 'Base: Balanceado';
+        at: CuadrilaterosPlayerTanque put: 'Tanque: Mucha vida / - Puntuación';
+        at: CuadrilaterosPlayerFragil put: 'Frágil: + Puntuación / 1 Vida';
+        at: CuadrilaterosPlayerSuertudo put: 'Suertudo: Mejores Tiradas / -Vida';
+        at: CuadrilaterosPlayerSteve put: 'STEVE: Solo hace cuadrados';
+        yourself
+]
+
+{ #category : #'as yet unclassified' }
+LanzadorCuadrilateros >> valoresRol [
+	"Genera la lista de Clases reales (los valores) que se devolverán al seleccionar."
+    ^ self rolesJugador keys
+]
