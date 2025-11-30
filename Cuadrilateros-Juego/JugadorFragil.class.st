@@ -1,5 +1,8 @@
 "
-Representa al JugadorFragil 
+Subclase de jugador
+--FRAGIL--
+*Tiene una sola vida
+*Acumula un puntaje mayor respecto a su area cubierta (125%)
 "
 Class {
 	#name : #JugadorFragil,
@@ -21,3 +24,4 @@ JugadorFragil >> initialize [
     vidas := 1.
 
 ]
+
