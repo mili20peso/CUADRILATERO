@@ -1,5 +1,5 @@
 "
-Representa Potenciadores 
+Clase abstracta de potenciador, se encarga d egenerar un potenciador al azar. 
 "
 Class {
 	#name : #Potenciador,
@@ -29,3 +29,4 @@ Potenciador >> aplicarModificadorDadoA: unDiccionario [
     ^ unDiccionario
 
 ]
+
