@@ -1,5 +1,5 @@
 "
-Ventana juego
+Esta es la interfaz completa. Maneja los eventos de teclado y mouse
 "
 Class {
 	#name : #VentanaJuego,
@@ -410,3 +410,4 @@ VentanaJuego >> wantsSteps [
     ^ true
 
 ]
+
