@@ -1,5 +1,5 @@
 "
-Representa al Lanzador 
+Esta clase esta hecha para poder facilitar el arranque del juego y no depender de un script lanzador
 "
 Class {
 	#name : #Lanzador,
@@ -94,3 +94,4 @@ Lanzador class >> valoresRoles [
 
 
 ]
+
