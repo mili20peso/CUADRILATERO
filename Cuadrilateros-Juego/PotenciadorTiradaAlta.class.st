@@ -1,5 +1,5 @@
 "
-Representa al Potenciadortiradaalta 
+Fuerza a que la proxima tirada no de numeros menores a 3 
 "
 Class {
 	#name : #PotenciadorTiradaAlta,
@@ -21,3 +21,4 @@ PotenciadorTiradaAlta >> aplicarModificadorDadoA: unDiccionario [
     unDiccionario at: '>3' put: true.
 
 ]
+
