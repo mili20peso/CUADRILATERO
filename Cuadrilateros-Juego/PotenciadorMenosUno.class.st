@@ -1,5 +1,5 @@
 "
-Representa al PotenciadorMenosuno 
+Resta -1 al numero recibido por los dados en la proxima tirada 
 "
 Class {
 	#name : #PotenciadorMenosUno,
@@ -20,3 +20,4 @@ PotenciadorMenosUno >> aplicarModificadorDadoA: unDiccionario [
     unDiccionario at: '-1' put: true.
 
 ]
+
