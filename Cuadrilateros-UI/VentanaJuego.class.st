@@ -281,7 +281,7 @@ VentanaJuego >> mostrarOverlayPotenciadorPara: unJugador [
     "Usamos String streamContents: para compatibilidad total con el entorno"
     textoMensaje := String streamContents: [ :flujo |
         potenciadoresAdquiridos withIndexDo: [ :pot :i |
-            flujo nextPutAll: (self textoParaPotenciador: pot) , ' (Ganado)'.
+            flujo nextPutAll: (self textoParaPotenciador: pot) , ' (Obtenido)'.
             i < potenciadoresAdquiridos size ifTrue: [ flujo cr ] 
         ]
     ].
