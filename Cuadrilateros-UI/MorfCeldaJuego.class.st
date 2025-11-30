@@ -1,5 +1,5 @@
 "
-Morfcelda
+Esta clase representa un cuadradito en la pantalla. Sabe de qué color pintarse y qué ícono de PowerUp mostrar.
 "
 Class {
 	#name : #MorfCeldaJuego,
@@ -92,3 +92,4 @@ MorfCeldaJuego >> iconoParaPotenciador: unPotenciador [
 
 
 ]
+
