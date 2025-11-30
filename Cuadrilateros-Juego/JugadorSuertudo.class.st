@@ -1,5 +1,8 @@
 "
-Representa al JugadorSuertudo 
+Subclase de jugador
+--SUERTUDO--
+*Tiene menos vida (2)
+*Poder Suertudo: Si una tirada tiene los dos numeros menores a 3, suertudo vuelve a tirar los dados 
 "
 Class {
 	#name : #JugadorSuertudo,
@@ -37,3 +40,4 @@ JugadorSuertudo >> tirarDadoCon: unDado [
     ^ resultadoPunto
 
 ]
+
