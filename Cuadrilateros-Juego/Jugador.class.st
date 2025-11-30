@@ -1,5 +1,5 @@
 "
-Representa al Jugador 
+Clase de jugador, contiene la informacion propia de cada usuario del juego, maneja logicas propias de su clase y ademas su ID se utiliza como indice para realizar otros metodos en clases distintas 
 "
 Class {
 	#name : #Jugador,
@@ -145,3 +145,4 @@ Jugador >> vidas [
     ^ vidas
 
 ]
+
