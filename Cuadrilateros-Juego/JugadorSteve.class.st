@@ -1,5 +1,8 @@
 "
-Representa al JugadorSteve 
+Subclase de jugador
+--STEVE--
+*Tiene la misma vida
+*Solo pone figuras cuadradas (base = altura) 
 "
 Class {
 	#name : #JugadorSteve,
@@ -19,3 +22,4 @@ JugadorSteve >> tirarDadoCon: unDado [
     ^ valor @ valor
 
 ]
+
