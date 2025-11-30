@@ -1,5 +1,5 @@
 "
-Representa al PotenciadorVidaextra 
+Agrega una vida al jugador que lo obtenga
 "
 Class {
 	#name : #PotenciadorVidaExtra,
@@ -15,3 +15,4 @@ PotenciadorVidaExtra >> activarEn: unJugador juego: unJuego [
     "2. Crucial: Agrega el potenciador a la lista de efectos activos temporalmente, para que la UI lo detecte y muestre el overlay."
     unJugador agregarPotenciador: self. 
 ]
+
