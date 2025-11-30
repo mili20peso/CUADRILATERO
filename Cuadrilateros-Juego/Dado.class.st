@@ -1,5 +1,5 @@
 "
-Representa Dado
+Clase dado, se encarga de generar las dimensiones de la figura a colocar, ademas es afectada por los potenciadores de dado, que pueden adulterar los resultados de los valores que devuelve
 "
 Class {
 	#name : #Dado,
@@ -75,3 +75,4 @@ Dado >> tirar: modificadores [
     ^ valorX @ valorY  "Esto devuelve un objeto Point"
 
 ]
+
