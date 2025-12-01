@@ -17,10 +17,9 @@ Potenciador class >> subclaseAleatoria [
 ]
 
 { #category : #'as yet unclassified' }
-Potenciador >> activarEn: unJugador juego: unJuego [ [
+Potenciador >> activarEn: unJugador juego: unJuego [ 
     self subclassResponsibility
 "Como es una clase abstracta, delega la responsabilidad de tener una activacion a una clase hija"
-]
 ]
 
 { #category : #'as yet unclassified' }
@@ -29,4 +28,5 @@ Potenciador >> aplicarModificadorDadoA: unDiccionario [
     ^ unDiccionario
 
 ]
+
 
